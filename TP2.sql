@@ -22,7 +22,6 @@ create table MEMBRE (
                    
  );
 
-
 create table PROJET (
   NO_PROJET, 
   NOM_PRO, 
@@ -64,6 +63,7 @@ create table RAPPORT (
 create table RAPPORT_ETAT (
   CODE_ETAT_RAP,
   NOM_ETAT_RAP
+  
 );
 
 create table INSCRIPTION_CONFERENCE (
@@ -71,6 +71,7 @@ create table INSCRIPTION_CONFERENCE (
   NO_MEMBRE#,
   DATE_DEMANDE_INS,
   STATUT_APPROBATION_INS
+  
 );
 
 create table CONFERENCE (
