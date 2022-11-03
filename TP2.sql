@@ -80,18 +80,24 @@ create table NOTIFICATION (
 );
 
 create table RAPPORT (
-  NO_RAPPORT, 
-  NO_PROJET#,
-  TITRE_RAP,
-  NOM_FICHIER_RAP,
-  DATE_DEPOT_RAP,
-  CODE_ETAT_RAP#
-  
+  NO_RAPPORT number(10) not null,
+  NO_PROJET# number(10) not null,
+  TITRE_RAP varchar2(30) not null,
+  NOM_FICHIER_RAP varchar2(200) not null, 
+  DATE_DEPOT_RAP DATE not null,
+  CODE_ETAT_RAP# char(4) not null,
+  constraint PK_RAPPORT primary key (NO_RAPPORT),
+  constraint FK_RAPPORT foreign key (NO_PROJET) 
+				references PROJET (NO_PROJET) on delete set null,
+  constraint FK_RAPPORT foreign key (CODE_ETAT_RAP) 
+				references RAPPORT_ETAT (CODE_ETAT_RAP) on delete set null
+	
 );
 
 create table RAPPORT_ETAT (
-  CODE_ETAT_RAP,
-  NOM_ETAT_RAP
+  CODE_ETAT_RAP char(4) not null,
+  NOM_ETAT_RAP varchar2(30) not null,
+  constraint PK_RAPPORT_ETAT primary key (ODE_ETAT_RAP)
   
 );
 
