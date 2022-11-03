@@ -1,20 +1,31 @@
                                                 /**** TP2 *******/ 
 /***** Création des tables du cas CIPRÉ ******/
 
+drop table TP2_MEMBRE cascade constraints;
+drop table TP2_PROJET cascade constraints;
+drop table TP1_EQUIPE_PROJET cascade constraints;
+drop table TP2_NOTIFICATION cascade constraints;
+drop table TP2_RAPPORT cascade constraints;
+drop table TP2_RAPPORT_ETAT cascade constraints;
+drop table TP2_INSCRIPTION_CONFERENCE cascade constraints;
+drop table TP2_CONFERENCE cascade constraints;
+drop sequence NO_CHERCH_SEQ;
+
 
 create table MEMBRE (
-  NO_MEMBRE , 
-  UTILISATEUR_MEM, 
-  MOT_DE_PASSE_MEM, 
-  NOM_MEM, 
-  PRENOM_MEM,
-  ADRESSE_MEM, 
-  CODE_POSTAL_MEM, 
-  PAYS_MEM, TEL_MEM, 
-  FAX_MEM,
-  LANGUE_CORRESPONDANCE_MEM, 
-  NOM_FICHIER_PHOTO_MEM, 
-  ADRESSE_WEB_MEM,
+  NO_MEMBRE number(10) not null, 
+  UTILISATEUR_MEM varchar2(10) not null,
+  MOT_DE_PASSE_MEM varchar2(30) not null,
+  NOM_MEM varchar2(30) not null,
+  PRENOM_MEM varchar2(30) not null,
+  ADRESSE_MEM varchar2(30) not null,  
+  CODE_POSTAL_MEM char(7) not null, 
+  PAYS_MEM varchar2(30) not null, 
+  TEL_MEM char(13) null, 
+  FAX_MEM char(13) null,  
+  LANGUE_CORRESPONDANCE_MEM varchar2(30) default 'Français' not null,
+  NOM_FICHIER_PHOTO_MEM varchar2(200) null, 
+  ADRESSE_WEB_MEM varchar2(30) null,
   INSTITUTION_MEM, 
   COURRIEL_MEM, 
   EST_ADMINISTRATEUR_MEM, 
@@ -84,3 +95,7 @@ create table CONFERENCE (
   ADRESSE_CON
 
 );
+
+create sequence NO_CHERCH_SEQ
+    start with 1000
+    increment by 1;
