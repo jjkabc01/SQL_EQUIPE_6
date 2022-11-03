@@ -26,39 +26,56 @@ create table MEMBRE (
   LANGUE_CORRESPONDANCE_MEM varchar2(30) default 'Français' not null,
   NOM_FICHIER_PHOTO_MEM varchar2(200) null, 
   ADRESSE_WEB_MEM varchar2(30) null,
-  INSTITUTION_MEM, 
-  COURRIEL_MEM, 
-  EST_ADMINISTRATEUR_MEM, 
-  EST_SUPERVISEUR_MEM,
-  EST_APPOUVEE_INSCRIPTION_MEM, NO_MEMBRE_PATRON#
+  INSTITUTION_MEM varchar2(30) null,
+  COURRIEL_MEM varchar2(30) not null,
+  EST_ADMINISTRATEUR_MEM number(1) default 0 not null, 
+  EST_SUPERVISEUR_MEM number(1) default 0 not null, 
+  EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
+  NO_MEMBRE_PATRON# number(10) not null, 
+  constraint PK_MEMBRE primary key (NO_MEMBRE),
+  constraint FK_MEMBRE foreign key (NO_MEMBRE_PATRON) 
+				references TP1_MEMBRE (NO_MEMBRE_PATRON) on delete set null
                    
  );
 
 create table PROJET (
-  NO_PROJET, 
-  NOM_PRO, 
-  MNT_ALLOUE_PRO, 
-  STATUT_PRO, 
-  DATE_DEBUT_PRO, 
-  DATE_FIN_PRO
+  NO_PROJET number(10) not null, 
+  NOM_PRO varchar2(30) not null,
+  MNT_ALLOUE_PRO number(6,2) default 0.0 not null, 
+  STATUT_PRO varchar2(30) default 'Initial' not null,
+  DATE_DEBUT_PRO DATE not null,
+  DATE_FIN_PRO DATE not null,
+  constraint PK_PROJET primary key (NO_PROJET),
+ 	constraint CT_STATUT_PRO check (STATUT_PRO in ('Initial', 'Intermédiaire', 'Final'))
   
 );
 
 create table EQUIPE_PROJET (
-  NO_MEMBRE#,
-  NO_PROJET#, 
-  EST_DIRECTEUR_PRO
-  
+  NO_MEMBRE# number(10) not null, 
+  NO_PROJET# number(10) not null, 
+  EST_DIRECTEUR_PRO number(1) default 0 not null, 
+  constraint PK_EQUIPE_PROJET primary key (NO_MEMBRE, NO_PROJET),
+  constraint FK_EQUIPE_PROJET foreign key (NO_MEMBRE) 
+				references TP1_MEMBRE (NO_MEMBRE) on delete set null,
+  constraint FK_EQUIPE_PROJET foreign key (NO_PROJET) 
+				references TP1_PROJET (NO_PROJET) on delete set null
+
 );
 
 create table NOTIFICATION (
-  NO_NOTIFICATION,
-  NOM_NOT,
-  DATE_ECHEANCE_NOT,
-  ETAT_NOT,
-  NOTE_NOT,
-  NO_MEM_ADMIN_CREATION#,
-  NO_MEM_ATTRIBUTION#
+  NO_NOTIFICATION number(10) not null,
+  NOM_NOT varchar2(30) not null,
+  DATE_ECHEANCE_NOT DATE not null,
+  ETAT_NOT varchar2(30) default 'Débuté' not null,
+  NOTE_NOT varchar2(1000) null,
+  NO_MEM_ADMIN_CREATION# number(10) not null,
+  NO_MEM_ATTRIBUTION# number(10) not null,
+  constraint PK_NOTIFICATION primary key (NO_NOTIFICATION),
+  constraint FK_NOTIFICATION foreign key (NO_MEM_ADMIN_CREATION) 
+				references TP1_MEMBRE (NO_MEM_ADMIN_CREATION) on delete set null,
+  constraint FK_NOTIFICATION foreign key (NO_MEM_ATTRIBUTION) 
+				references TP1_PROJET (NO_MEM_ATTRIBUTION) on delete set null,
+  constraint CT_ETAT_NOT check (ETAT_NOT in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
   
 );
 
