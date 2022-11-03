@@ -1,8 +1,9 @@
-/**** TP2 *******/ 
+                                                /**** TP2 *******/ 
 /***** Création des tables du cas CIPRÉ ******/
 
+
 create table MEMBRE (
-  NO_MEMBRE, 
+  NO_MEMBRE , 
   UTILISATEUR_MEM, 
   MOT_DE_PASSE_MEM, 
   NOM_MEM, 
