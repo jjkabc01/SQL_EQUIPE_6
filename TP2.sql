@@ -1,14 +1,14 @@
                                                 /**** TP2 *******/ 
 /***** Création des tables du cas CIPRÉ ******/
 
-drop table TP2_MEMBRE cascade constraints;
-drop table TP2_PROJET cascade constraints;
-drop table TP1_EQUIPE_PROJET cascade constraints;
-drop table TP2_NOTIFICATION cascade constraints;
-drop table TP2_RAPPORT cascade constraints;
-drop table TP2_RAPPORT_ETAT cascade constraints;
-drop table TP2_INSCRIPTION_CONFERENCE cascade constraints;
-drop table TP2_CONFERENCE cascade constraints;
+drop table TMEMBRE cascade constraints;
+drop table PROJET cascade constraints;
+drop table EQUIPE_PROJET cascade constraints;
+drop table NOTIFICATION cascade constraints;
+drop table RAPPORT cascade constraints;
+drop table RAPPORT_ETAT cascade constraints;
+drop table INSCRIPTION_CONFERENCE cascade constraints;
+drop table CONFERENCE cascade constraints;
 drop sequence NO_CHERCH_SEQ;
 
 
@@ -34,7 +34,7 @@ create table MEMBRE (
   NO_MEMBRE_PATRON# number(10) not null, 
   constraint PK_MEMBRE primary key (NO_MEMBRE),
   constraint FK_MEMBRE foreign key (NO_MEMBRE_PATRON) 
-				references TP1_MEMBRE (NO_MEMBRE_PATRON) on delete set null
+				references MEMBRE (NO_MEMBRE_PATRON) on delete set null
                    
  );
 
