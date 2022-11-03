@@ -42,11 +42,11 @@ create table PROJET (
   NO_PROJET number(10) not null, 
   NOM_PRO varchar2(30) not null,
   MNT_ALLOUE_PRO number(6,2) default 0.0 not null, 
-  STATUT_PRO varchar2(30) default 'Initial' not null,
+  STATUT_PRO varchar2(30) default 'Initiale' not null,
   DATE_DEBUT_PRO DATE not null,
   DATE_FIN_PRO DATE not null,
   constraint PK_PROJET primary key (NO_PROJET),
- 	constraint CT_STATUT_PRO check (STATUT_PRO in ('Initial', 'Intermédiaire', 'Final'))
+ 	constraint CT_STATUT_PRO check (STATUT_PRO in ('Initiale', 'Intermédiaire', 'Final'))
   
 );
 
@@ -97,25 +97,27 @@ create table RAPPORT (
 create table RAPPORT_ETAT (
   CODE_ETAT_RAP char(4) not null,
   NOM_ETAT_RAP varchar2(30) not null,
-  constraint PK_RAPPORT_ETAT primary key (ODE_ETAT_RAP)
+  constraint PK_RAPPORT_ETAT primary key (CODE_ETAT_RAP)
   
 );
 
 create table INSCRIPTION_CONFERENCE (
-  SIGLE_CONFERENCE#,
-  NO_MEMBRE#,
-  DATE_DEMANDE_INS,
-  STATUT_APPROBATION_INS
-  
+  SIGLE_CONFERENCE# varchar2(10) not null,
+  NO_MEMBRE# number(10) not null, 
+  DATE_DEMANDE_INS DATE not null,
+  STATUT_APPROBATION_INS varchar2(30) default 'Non débutée' not null,
+  constraint PK_PROJET primary key (NO_PROJET),
+  constraint CT_INSCRIPTION_CONFERENCE check (STATUT_APPROBATION_INS in ('Non débutée', 'En cours', 'À approuver', 'Terminée'))
+	
 );
 
 create table CONFERENCE (
-  SIGLE_CONFERENCE,
-  TITRE_CON,
-  DATE_DEBUT_CON,
-  DATE_FIN_CON,
-  LIEU_CON,
-  ADRESSE_CON
+  SIGLE_CONFERENCE varchar2(10) not null,
+  TITRE_CON varchar2(30) not null,
+  DATE_DEBUT_CON DATE not null,
+  DATE_FIN_CON DATE not null,
+  LIEU_CON varchar2(30) not null,
+  ADRESSE_CON varchar2(30) not null,
 
 );
 
