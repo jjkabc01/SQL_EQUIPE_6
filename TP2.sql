@@ -65,7 +65,9 @@ create table TP2_PROJET (
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
   constraint PK_TP2_PROJET primary key (NO_PROJET),
-  constraint CT_STATUT_PRO check (STATUT_PRO in ('Initiale', 'Intermédiaire', 'Finale'))
+  constraint CT_STATUT_PRO check (STATUT_PRO in ('Initiale', 'Intermédiaire', 'Finale')),
+  constraint CT_MNT_ALLOUE_PRO_SUPERIEUR_EGAL_0 check(MNT_ALLOUE_PRO >= 0),
+  constraint CT_DATE_FIN_PRO_SUPERIEUR_DATE_DEBUT_PRO check (DATE_FIN_PRO > DATE_DEBUT_PRO)
   
 );
 
