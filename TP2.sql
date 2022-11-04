@@ -11,13 +11,13 @@ drop table TP2_INSCRIPTION_CONFERENCE cascade constraints;
 drop table TP2_CONFERENCE cascade constraints;
 drop sequence NO_MEMBRE_SEQ;
 drop sequence NO_PROJET_SEQ;
-drop sequence NO_NOTIFICATION;
-drop sequence NO_RAPPORT;
+drop sequence NO_NOTIFICATION_SEQ;
+drop sequence NO_RAPPORT_SEQ;
 
 
 create table TP2_MEMBRE (
   NO_MEMBRE number(10) not null, 
-  UTILISATEUR_MEM varchar2(10) not null,
+  UTILISATEUR_MEM varchar2(20) not null,
   MOT_DE_PASSE_MEM varchar2(20) not null,
   NOM_MEM varchar2(30) not null,
   PRENOM_MEM varchar2(30) not null,
@@ -163,11 +163,11 @@ create sequence NO_PROJET_SEQ
     start with 1000
     increment by 1;
     
-create sequence NO_NOTIFICATION
+create sequence NO_NOTIFICATION_SEQ
     start with 1000
     increment by 1;
     
-create sequence NO_RAPPORT
+create sequence NO_RAPPORT_SEQ
     start with 1000
     increment by 1;
     
@@ -177,12 +177,20 @@ create sequence NO_RAPPORT
             from TP2_MEMBRE
             where EST_ADMINISTRATEUR_MEM = 1;
     
-    
+    create or replace view VUE_SUPERVISEUR ( UTILISATEUR_ADMINISTRATEUR, MOT_DE_PASSE_ADM, COURRIEL_ADM, TEL_ADM, NOM_ADM, PRENOM_ADM, NO_MEMBRE)
+        as select UTILISATEUR_MEM, MOT_DE_PASSE_MEM, COURRIEL_MEM, TEL_MEM, NOM_MEM, PRENOM_MEM,NO_MEMBRE
+            from TP2_MEMBRE
+            where EST_SUPERVISEUR_MEM = 1;
     
     insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( 1002, 'cipre', 'cipre', 'cipre', 'cipre', 'cipre hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'cipre', '(514)699-2569','(514)699-2569','francais','cipre','cipre','cipre','cipre@cipre.com',1,0,1);
+  values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com',1,0,1);
+  
+  
+      insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com',0,1,1);
   
   select * from VUE_ADMINISTRATEUR;
     
-    
+  select * from VUE_SUPERVISEUR;
