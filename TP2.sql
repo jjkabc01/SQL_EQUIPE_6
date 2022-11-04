@@ -34,7 +34,16 @@ create table TP2_MEMBRE (
   EST_ADMINISTRATEUR_MEM number(1) default 0 not null, 
   EST_SUPERVISEUR_MEM number(1) default 0 not null, 
   EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
-  constraint PK_TP2_MEMBRE primary key (NO_MEMBRE)
+  constraint CT_LONGUEUR_ADRESSE_MEM check ( length(ADRESSE_MEM) > 20 and length (ADRESSE_MEM) < 40),
+  constraint CT_CODE_POSTAL_MEM 
+	check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
+  constraint AK_TP2_MEMBRE_COURRIEL_MEM unique (COURRIEL_MEM),
+  constraint AK_TP2_MEMBRE_UTILISATEUR_MEM unique (UTILISATEUR_MEM),
+  constraint AK_TP2_MEMBRE_PRENOM_MEM unique (PRENOM_MEM),
+  constraint AK_TP2_MEMBRE_NOM_MEM unique (NOM_MEM),
+  constraint AK_TP2_MEMBRE_ADRESSE_MEM unique (ADRESSE_MEM),
+  constraint AK_TP2_MEMBRE_CODE_POSTAL_MEM unique (CODE_POSTAL_MEM),
+  constraint PK_TP2_MEMBRE_NO_MEMBRE primary key (NO_MEMBRE)
 
 /** table reference  clé étrangère inexistante à touver
 NO_MEMBRE_PATRON number(10) null, 
@@ -44,6 +53,8 @@ NO_MEMBRE_PATRON number(10) null,
 **/
 	
  );
+
+
 
 create table TP2_PROJET (
   NO_PROJET number(10) not null, 
