@@ -31,6 +31,7 @@ create table TP2_MEMBRE (
   ADRESSE_WEB_MEM varchar2(30) null,
   INSTITUTION_MEM varchar2(30) not null,
   COURRIEL_MEM varchar2(30) not null,
+  NO_MEMBRE_PATRON number(10) not null, 
   EST_ADMINISTRATEUR_MEM number(1) default 0 not null, 
   EST_SUPERVISEUR_MEM number(1) default 0 not null, 
   EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
@@ -44,11 +45,10 @@ create table TP2_MEMBRE (
   constraint AK_TP2_MEMBRE_NOM_MEM unique (NOM_MEM),
   constraint AK_TP2_MEMBRE_ADRESSE_MEM unique (ADRESSE_MEM),
   constraint AK_TP2_MEMBRE_CODE_POSTAL_MEM unique (CODE_POSTAL_MEM),
-  constraint PK_TP2_MEMBRE_NO_MEMBRE primary key (NO_MEMBRE)
+  constraint PK_TP2_MEMBRE primary key (NO_MEMBRE)
 
 /** table reference  clé étrangère inexistante à touver
-NO_MEMBRE_PATRON number(10) null, 
-  constraint PK_TP2_MEMBRE primary key (NO_MEMBRE),
+
   constraint FK_MEMBRE foreign key (NO_MEMBRE_PATRON) 
 				references MEMBRE (NO_MEMBRE_PATRON) on delete set null
 **/
@@ -96,10 +96,11 @@ create table TP2_NOTIFICATION (
   constraint CT_ETAT_NOT check (ETAT_NOT in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
   
 /* table reference  clé étrangère inexistante à touver
+
   constraint FK_NOTIFICATION_NO_MEM_ADMIN_CREATION foreign key (NO_MEM_ADMIN_CREATION) 
-				references TP1_MEMBRE (NO_MEM_ADMIN_CREATION) on delete set null,
+				references TP1_MEMBRE (NO_MEM_ADMIN_CREATION),
   constraint FK_NOTIFICATION foreign key (NO_MEM_ATTRIBUTION) 
-				references TP1_PROJET (NO_MEM_ATTRIBUTION) on delete set null,
+				references TP1_PROJET (NO_MEM_ATTRIBUTION),
   */
   
 );
@@ -185,13 +186,13 @@ create sequence NO_RAPPORT_SEQ
             where EST_SUPERVISEUR_MEM = 1;
     
     insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
-  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com',1,0,1);
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com', 1500 ,1,0,1);
   
   
       insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
-  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com',0,1,1);
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com', 1500 ,0,1,1);
   
   select * from VUE_ADMINISTRATEUR;
     
