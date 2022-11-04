@@ -21,7 +21,7 @@ create table TP2_MEMBRE (
   MOT_DE_PASSE_MEM varchar2(20) not null,
   NOM_MEM varchar2(30) not null,
   PRENOM_MEM varchar2(30) not null,
-  ADRESSE_MEM varchar2(30) not null,  
+  ADRESSE_MEM varchar2(40) not null,  
   CODE_POSTAL_MEM char(7) not null,  /* 7 char parceque le code postal doit contenir un espace ? */
   PAYS_MEM varchar2(30) not null, 
   TEL_MEM char(13) not null, 
@@ -131,7 +131,7 @@ create table TP2_CONFERENCE (
   DATE_DEBUT_CON date not null,
   DATE_FIN_CON date not null,
   LIEU_CON varchar2(30) not null,
-  ADRESSE_CON varchar2(30) not null,
+  ADRESSE_CON varchar2(40) not null,
   constraint PK_TP2_CONFERENCE primary key (SIGLE_CONFERENCE),
   constraint CT_LONGUEUR_ADRESSE_CON check ( length(ADRESSE_CON) > 20 and length (ADRESSE_CON) < 40)
 
@@ -169,3 +169,19 @@ create sequence NO_NOTIFICATION
 create sequence NO_RAPPORT
     start with 1000
     increment by 1;
+    
+    
+    create or replace view VUE_ADMINISTRATEUR ( UTILISATEUR_ADMINISTRATEUR, MOT_DE_PASSE_ADM, COURRIEL_ADM, TEL_ADM, NOM_ADM, PRENOM_ADM, NO_MEMBRE)
+        as select UTILISATEUR_MEM, MOT_DE_PASSE_MEM, COURRIEL_MEM, TEL_MEM, NOM_MEM, PRENOM_MEM,NO_MEMBRE
+            from TP2_MEMBRE
+            where EST_ADMINISTRATEUR_MEM = 1;
+    
+    
+    
+    insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( 1002, 'cipre', 'cipre', 'cipre', 'cipre', 'cipre hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'cipre', '(514)699-2569','(514)699-2569','francais','cipre','cipre','cipre','cipre',1,0,1);
+  
+  select * from VUE_ADMINISTRATEUR;
+    
+    
