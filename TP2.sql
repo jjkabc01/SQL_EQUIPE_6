@@ -1,4 +1,7 @@
                                                 /**** TP2 *******/ 
+
+
+
 /***** Création des tables du cas CIPRÉ ******/
 
 drop table TP2_MEMBRE cascade constraints;
@@ -37,7 +40,8 @@ create table TP2_MEMBRE (
   EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
   constraint CT_COURRIEL_MEM_FORMAT check (COURRIEL_MEM like '%_@__%.__%'),
   constraint CT_LONGUEUR_ADRESSE_MEM check ( length(ADRESSE_MEM) > 20 and length (ADRESSE_MEM) < 40),
-  constraint CT_CODE_POSTAL_MEM check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
+  constraint CT_CODE_POSTAL_MEM 
+	check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
   constraint AK_TP2_MEMBRE_COURRIEL_MEM unique (COURRIEL_MEM),
   constraint AK_TP2_MEMBRE_UTILISATEUR_MEM unique (UTILISATEUR_MEM),
   constraint AK_TP2_MEMBRE_PRENOM_MEM unique (PRENOM_MEM),
@@ -157,6 +161,9 @@ create table TP2_INSCRIPTION_CONFERENCE (
 );
 
 
+
+/***** Creation des séquences ****/
+
 create sequence NO_MEMBRE_SEQ
     start with 1000
     increment by 1;
@@ -174,6 +181,10 @@ create sequence NO_RAPPORT_SEQ
     increment by 1;
     
     
+    
+    
+/******* Creation des Vues initiales *****/
+    
     create or replace view VUE_ADMINISTRATEUR ( UTILISATEUR_ADMINISTRATEUR, MOT_DE_PASSE_ADM, COURRIEL_ADM, TEL_ADM, NOM_ADM, PRENOM_ADM, NO_MEMBRE)
         as select UTILISATEUR_MEM, MOT_DE_PASSE_MEM, COURRIEL_MEM, TEL_MEM, NOM_MEM, PRENOM_MEM,NO_MEMBRE
             from TP2_MEMBRE
@@ -183,16 +194,71 @@ create sequence NO_RAPPORT_SEQ
         as select UTILISATEUR_MEM, MOT_DE_PASSE_MEM, COURRIEL_MEM, TEL_MEM, NOM_MEM, PRENOM_MEM,NO_MEMBRE
             from TP2_MEMBRE
             where EST_SUPERVISEUR_MEM = 1;
+            
+            
+            
+            
+/******* Insertion pour le test des vues initiales ********/
     
-    insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
   values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com', 1500 ,1,0,1);
   
   
-      insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+      insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
   values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com', 1500 ,0,1,1);
   
   select * from VUE_ADMINISTRATEUR;
     
   select * from VUE_SUPERVISEUR;
+  
+  
+  
+  /******* création de la function pour la génération des mot de passe des membres *******/
+  
+ create or replace function FCT_GENERER_MOT_DE_PASSE(V_NB_CARACTERE in number) return varchar2
+  is
+    V_NB_CARACTERE_FINALE number := 0;
+    V_MOT_DE_PASSE varchar2 (14);
+    V_MOT_DE_PASSE_temp varchar2 (14);
+    V_QUIT_LOOP number (1) := 0;
+    
+  begin 
+  
+    if V_NB_CARACTERE < 7 then
+        V_NB_CARACTERE_FINALE := 7;
+    end if;
+        
+    if V_NB_CARACTERE > 14 then
+        V_NB_CARACTERE_FINALE := 14;
+    end if;
+     
+    while V_QUIT_LOOP = 0
+        loop
+            V_MOT_DE_PASSE := dbms_random.string('a', V_NB_CARACTERE-4) || substr('!?&$/|#', dbms_random.value (1, 8), 1 ) || dbms_random.string('x', 1)  || dbms_random.string('l', 1) ||  TRUNC(DBMS_RANDOM.value(1,9));
+            V_QUIT_LOOP := 1;
+
+           if (regexp_count(V_MOT_DE_PASSE, '[a-z]') > 0
+                and regexp_count(V_MOT_DE_PASSE, '[A-Z]') > 0 
+                and regexp_count(V_MOT_DE_PASSE, '[0-9]') > 0
+                or regexp_count(V_MOT_DE_PASSE, '[!|?|&|$|/|#|]') > 0) then
+                    V_QUIT_LOOP := 1;
+            end if;
+          
+            
+        end loop;
+        
+    return (V_MOT_DE_PASSE);
+    
+  end FCT_GENERER_MOT_DE_PASSE;
+  /
+  
+  select FCT_GENERER_MOT_DE_PASSE(7) from DUAL;
+  
+  
+  /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
+  
+  insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'jhon.doe', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com', 1500 ,1,0,1);
