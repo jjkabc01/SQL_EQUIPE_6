@@ -37,8 +37,7 @@ create table TP2_MEMBRE (
   EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
   constraint CT_COURRIEL_MEM_FORMAT check (COURRIEL_MEM like '%_@__%.__%'),
   constraint CT_LONGUEUR_ADRESSE_MEM check ( length(ADRESSE_MEM) > 20 and length (ADRESSE_MEM) < 40),
-  constraint CT_CODE_POSTAL_MEM 
-	check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
+  constraint CT_CODE_POSTAL_MEM check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
   constraint AK_TP2_MEMBRE_COURRIEL_MEM unique (COURRIEL_MEM),
   constraint AK_TP2_MEMBRE_UTILISATEUR_MEM unique (UTILISATEUR_MEM),
   constraint AK_TP2_MEMBRE_PRENOM_MEM unique (PRENOM_MEM),
