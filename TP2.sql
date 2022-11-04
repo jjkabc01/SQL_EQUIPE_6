@@ -34,6 +34,7 @@ create table TP2_MEMBRE (
   EST_ADMINISTRATEUR_MEM number(1) default 0 not null, 
   EST_SUPERVISEUR_MEM number(1) default 0 not null, 
   EST_APPOUVEE_INSCRIPTION_MEM number(1) default 0 not null, 
+  constraint CT_COURRIEL_MEM_FORMAT check (COURRIEL_MEM like '%_@__%.__%'),
   constraint CT_LONGUEUR_ADRESSE_MEM check ( length(ADRESSE_MEM) > 20 and length (ADRESSE_MEM) < 40),
   constraint CT_CODE_POSTAL_MEM 
 	check ( regexp_like( CODE_POSTAL_MEM, '[a-zA-Z][0-9][a-zA-Z] [0-9][a-zA-Z][0-9]')),
@@ -180,7 +181,7 @@ create sequence NO_RAPPORT
     
     insert into TP2_MEMBRE(  NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( 1002, 'cipre', 'cipre', 'cipre', 'cipre', 'cipre hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'cipre', '(514)699-2569','(514)699-2569','francais','cipre','cipre','cipre','cipre',1,0,1);
+  values ( 1002, 'cipre', 'cipre', 'cipre', 'cipre', 'cipre hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'cipre', '(514)699-2569','(514)699-2569','francais','cipre','cipre','cipre','cipre@cipre.com',1,0,1);
   
   select * from VUE_ADMINISTRATEUR;
     
