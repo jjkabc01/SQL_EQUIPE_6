@@ -372,12 +372,12 @@ create sequence NO_RAPPORT_SEQ
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
-                                                 /******************* Question h) afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et «Paul»  *********************/
-    /******************** Question h)i) À l'aide d'un in **************************/
+                                                 /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
+    /******************** Question j)i) Utilisant un not in. **************************/
     
-    /******************** Question h)i) À l'aide d'une jointure *******************/
+    /******************** Question j)i) Utilisant un minus (équivalent Oracle de except) *******************/
     
-    /******************** Question h)i) À l'aide d'un exists *******************/
+    /******************** Question j)i) Utilisant un not exists *******************/
         
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
