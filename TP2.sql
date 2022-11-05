@@ -1,4 +1,4 @@
-     /**** TP2 *******/ 
+  /**** TP2 *******/ 
 
 
 
@@ -91,12 +91,12 @@ create table TP2_NOTIFICATION (
   NO_NOTIFICATION number(10) not null,
   NOM_NOT varchar2(30) not null,
   DATE_ECHEANCE_NOT date not null,
-  ETAT_NOT varchar2(30) default 'Débuté' not null,
+  ETAT_NOT varchar2(30) default 'Non débutée' not null,
   NOTE_NOT varchar2(1000) null,
   NO_MEM_ADMIN_CREATION number(10) not null,
   NO_MEM_ATTRIBUTION number(10) not null,
   constraint PK_TP2_NOTIFICATION primary key (NO_NOTIFICATION),
-  constraint CT_ETAT_NOT check (ETAT_NOT in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
+  constraint CT_ETAT_NOT check (ETAT_NOT in ('Non débutée', 'En cours', 'À approuver ', 'Terminée'))
   
 /* table reference  clé étrangère inexistante à touver
 
@@ -263,11 +263,11 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,0,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,1,0,1);
   
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'CANADA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','CRA','talpe0@earthlink.net', 1550 ,0,1,1);
   
   select * from TP2_MEMBRE;
   
@@ -285,17 +285,17 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (5, 1000, 1);
   
-  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 1);
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 0);
   
   select * from TP2_EQUIPE_PROJET;
   
   /*************** Table TP2_NOTIFICATION **************/
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 1000, 1001);
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 1000, 1001);
   
   select * from TP2_NOTIFICATION;
   
@@ -350,4 +350,27 @@ create sequence NO_RAPPORT_SEQ
     
   select * from TP2_CONFERENCE;
     
- /************* Question 1i)   ****************/
+ /************* Question 1i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
+ 
+ insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'nsteagalld', FCT_GENERER_MOT_DE_PASSE(7), 'Steagall', 'Nessi', '4086 Delladonna Parkway cresent', 'T9N 1v5', 'Albania', '(632)699-3500','(414)699-0102','Anglais','/membre3.png','si.edu','Wordware','nsteagalld@baidu.com', 25 ,0,0,1);
+  
+   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'rroundsj', FCT_GENERER_MOT_DE_PASSE(7), 'Rounds', 'Rheba', '49 Crescent Oaks Circle palaba seflo', 'L9T 3K8', 'CANADA', '(514)682-4292','(514)334-7706','Francais','/membre4.png','earthlink.net','Twitternation','rroundsj@php.net', 25 ,0,0,1);
+  
+ 
+ insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'En cours', 'Note notification_1', 15, 25);
+  
+  insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'En cours', 'Note notification_2', 15, 30);
+    
+   select  M.NOM_MEM  || ' ' || M.PRENOM_MEM  as NOM_COMPLET_MEMBRE, count(N.NO_NOTIFICATION) as NB_NOTIFICATION
+   	from TP2_NOTIFICATION N, TP2_MEMBRE M
+        where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and N.ETAT_NOT = 'En cours'
+        group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
+        order by NB_NOTIFICATION desc;
+	
+	
