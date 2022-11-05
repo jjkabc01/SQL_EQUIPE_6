@@ -214,8 +214,8 @@ create sequence NO_RAPPORT_SEQ
   select * from VUE_SUPERVISEUR;
   
   
-  
-  /******* création de la function pour la génération des mot de passe des membres *******/
+
+  /*********** Question 2b) Donnez la requête SQL qui crée une fonction nommée FCT_GENERER_MOT_DE_PASSE pour la génération des mot de passe des membres ***********/
   
  create or replace function FCT_GENERER_MOT_DE_PASSE(V_NB_CARACTERE in number) return varchar2
   is
