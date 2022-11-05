@@ -1,4 +1,4 @@
-                                                /**** TP2 *******/ 
+     /**** TP2 *******/ 
 
 
 
@@ -63,7 +63,7 @@ create table TP2_MEMBRE (
 create table TP2_PROJET (
   NO_PROJET number(10) not null, 
   NOM_PRO varchar2(30) not null,
-  MNT_ALLOUE_PRO number(6,2) default 0.0 not null, 
+  MNT_ALLOUE_PRO number(9,2) default 0.0 not null, 
   STATUT_PRO varchar2(30) default 'Initiale' not null,
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
@@ -165,8 +165,8 @@ create table TP2_INSCRIPTION_CONFERENCE (
 /***** Creation des séquences ****/
 
 create sequence NO_MEMBRE_SEQ
-    start with 1000
-    increment by 1;
+    start with 5
+    increment by 5;
     
 create sequence NO_PROJET_SEQ
     start with 1000
@@ -257,7 +257,7 @@ create sequence NO_RAPPORT_SEQ
   select FCT_GENERER_MOT_DE_PASSE(7) from DUAL;
   
   
-   /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
+  /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
   
   /****** Table MEMBRE ********/
   
@@ -269,3 +269,17 @@ create sequence NO_RAPPORT_SEQ
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
   values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','Nom_fichier_photo_1','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
   
+  
+  /****************** Table PROJET ************/
+  
+  insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+  values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Initiale', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+  
+  insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+  values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Initiale', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
+  
+  /****************** Table TP2_EQUIPE_PROJET **********/
+  
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (5, 1000, 1);
+  
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 1);
