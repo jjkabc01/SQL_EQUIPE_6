@@ -59,7 +59,6 @@ create table TP2_MEMBRE (
  );
 
 
-
 create table TP2_PROJET (
   NO_PROJET number(10) not null, 
   NOM_PRO varchar2(30) not null,
@@ -367,19 +366,26 @@ create sequence NO_RAPPORT_SEQ
     values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'En cours', 'Note notification_2', 15, 30);
     
     
-   select  M.NOM_MEM  || ' ' || M.PRENOM_MEM  as NOM_COMPLET_MEMBRE, count(N.NO_NOTIFICATION) as NB_NOTIFICATION
+    select  M.NOM_MEM  || ' ' || M.PRENOM_MEM  as NOM_COMPLET_MEMBRE, count(N.NO_NOTIFICATION) as NB_NOTIFICATION
         from TP2_NOTIFICATION N, TP2_MEMBRE M
         where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and N.ETAT_NOT = 'En cours'
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
+                                                 /******************* Question h) afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et «Paul»  *********************/
+    /******************** Question h)i) À l'aide d'un in **************************/
+    
+    /******************** Question h)i) À l'aide d'une jointure *******************/
+    
+    /******************** Question h)i) À l'aide d'un exists *******************/
+        
      
-                                                /********************* Question n) ********************/
-   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRE *******************/
+                                                /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
+   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
    
    delete from TP2_MEMBRE where NO_MEMBRE = 5;
    
-   /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRE  ******************/
+   /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
    update TP2_MEMBRE
     set EST_APPOUVEE_INSCRIPTION_MEM = 1
