@@ -368,9 +368,7 @@ create sequence NO_RAPPORT_SEQ
     values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'En cours', 'Note notification_2', 15, 30);
     
    select  M.NOM_MEM  || ' ' || M.PRENOM_MEM  as NOM_COMPLET_MEMBRE, count(N.NO_NOTIFICATION) as NB_NOTIFICATION
-   	from TP2_NOTIFICATION N, TP2_MEMBRE M
+        from TP2_NOTIFICATION N, TP2_MEMBRE M
         where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and N.ETAT_NOT = 'En cours'
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
-	
-	
