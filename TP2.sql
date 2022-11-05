@@ -257,4 +257,15 @@ create sequence NO_RAPPORT_SEQ
   select FCT_GENERER_MOT_DE_PASSE(7) from DUAL;
   
   
-  /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
+   /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
+  
+  /****** Table MEMBRE ********/
+  
+  insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','Nom_fichier_photo_1','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,0,0,1);
+  
+   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+  values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','Nom_fichier_photo_1','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
+  
