@@ -134,10 +134,10 @@ create table TP2_RAPPORT (
 
 create table TP2_CONFERENCE (
   SIGLE_CONFERENCE varchar2(10) not null,
-  TITRE_CON varchar2(30) not null,
+  TITRE_CON varchar2(40) not null,
   DATE_DEBUT_CON date not null,
   DATE_FIN_CON date not null,
-  LIEU_CON varchar2(30) not null,
+  LIEU_CON varchar2(40) not null,
   ADRESSE_CON varchar2(40) not null,
   constraint PK_TP2_CONFERENCE primary key (SIGLE_CONFERENCE),
   constraint CT_LONGUEUR_ADRESSE_CON check ( length(ADRESSE_CON) > 20 and length (ADRESSE_CON) < 40)
@@ -263,21 +263,23 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,0,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,0,0,1);
   
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
   
+  select * from TP2_MEMBRE;
   
   /****************** Table TP2_PROJET ******************/
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-  values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Initiale', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Initiale', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-  values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Initiale', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Initiale', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
   
+  select * from TP2_PROJET;
   
   /****************** Table TP2_EQUIPE_PROJET **********/
   
@@ -285,15 +287,17 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 1);
   
+  select * from TP2_EQUIPE_PROJET;
   
   /*************** Table TP2_NOTIFICATION **************/
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-  values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-  values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
   
+  select * from TP2_NOTIFICATION;
   
    /*************** Table TP2_RAPPORT_ETAT **************/
    
@@ -301,29 +305,49 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCE', 'NOM_ETAT_RAPPORT_2');
   
+  select * from TP2_RAPPORT_ETAT;
   
   /************** Table TP2_RAPPORT ********************/
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-  values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'ABCD');
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-  values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'ABCD');
   
+  select * from TP2_RAPPORT;
   
   /************* Table TP2_CONFERENCE ********************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-  values ('CONF_1', 'TITRE_1', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'YAOUNDÉ', '22 RUE DE DOUALA AKOUA');
+    values ('CONF_1', 'TITRE_1', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'YAOUNDÉ', '22 RUE DE DOUALA AKOUA');
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-  values ('CON_2', 'TITRE_2', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'MONTRÉAL', '40 RUE GALT MONTREAL canada');
+    values ('CON_2', 'TITRE_2', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'MONTRÉAL', '40 RUE GALT MONTREAL CANADA');
+    
+  select * from TP2_CONFERENCE;
   
   
   /************* TP2_INSCRIPTION_CONFERENCE *************/
   
   insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
-  values ('CONF_1', 15,  to_date('15-04-03','RR-MM-DD'), 1);
+    values ('CONF_1', 15,  to_date('15-04-03','RR-MM-DD'), 1);
   
   insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
-  values ('CONF_1', 20,  to_date('15-04-03','RR-MM-DD'), 1);
+    values ('CONF_1', 20,  to_date('15-04-03','RR-MM-DD'), 1);
+    
+  select * from TP2_INSCRIPTION_CONFERENCE;
+  
+  /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
+  
+  insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    values ('CON_3', 'Congrès sur la pauvreté au Cambodge', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'STADE INTER SCOLAIRE', '1940 RUE DU PAVILLON CENTRAL');
+  
+  update TP2_CONFERENCE
+    set LIEU_CON = 'Théâtre de la cité universitaire',
+        ADRESSE_CON = '2325, rue de la terrasse'
+    where TITRE_CON = 'Congrès sur la pauvreté au Cambodge';
+    
+  select * from TP2_CONFERENCE;
+    
+ /************* Question 1i)   ****************/
