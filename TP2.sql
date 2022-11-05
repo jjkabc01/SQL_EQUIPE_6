@@ -283,9 +283,9 @@ create sequence NO_RAPPORT_SEQ
   
   /****************** Table TP2_EQUIPE_PROJET **********/
   
-  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (5, 1000, 1);
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1000, 1);
   
-  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 0);
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1001, 0);
   
   select * from TP2_EQUIPE_PROJET;
   
@@ -359,7 +359,6 @@ create sequence NO_RAPPORT_SEQ
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
     values ( NO_MEMBRE_SEQ.nextval, 'rroundsj', FCT_GENERER_MOT_DE_PASSE(7), 'Rounds', 'Rheba', '49 Crescent Oaks Circle palaba seflo', 'L9T 3K8', 'CANADA', '(514)682-4292','(514)334-7706','Francais','/membre4.png','earthlink.net','Twitternation','rroundsj@php.net', 25 ,0,0,1);
-  
  
  insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
     values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'En cours', 'Note notification_1', 15, 25);
@@ -367,8 +366,22 @@ create sequence NO_RAPPORT_SEQ
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
     values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'En cours', 'Note notification_2', 15, 30);
     
+    
    select  M.NOM_MEM  || ' ' || M.PRENOM_MEM  as NOM_COMPLET_MEMBRE, count(N.NO_NOTIFICATION) as NB_NOTIFICATION
         from TP2_NOTIFICATION N, TP2_MEMBRE M
         where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and N.ETAT_NOT = 'En cours'
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
+        
+     
+                                                /********************* Question n) ********************/
+   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRE *******************/
+   
+   delete from TP2_MEMBRE where NO_MEMBRE = 5;
+   
+   /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRE  ******************/
+   
+   update TP2_MEMBRE
+    set EST_APPOUVEE_INSCRIPTION_MEM = 1
+    where NO_MEMBRE = 10;
+    
