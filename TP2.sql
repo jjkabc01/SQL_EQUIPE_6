@@ -148,7 +148,7 @@ create table TP2_INSCRIPTION_CONFERENCE (
   SIGLE_CONFERENCE varchar2(10) not null,
   NO_MEMBRE number(10) not null, 
   DATE_DEMANDE_INS date not null,
-  STATUT_APPROBATION_INS varchar2(30) not null,   /* default 'Non débutée' not null,     ( il faut trouver les valeurs possible de STATUT_APPROBATION_INS) */
+  STATUT_APPROBATION_INS number(1) default 0 not null,   /* default 'Non débutée' not null,     ( il faut trouver les valeurs possible de STATUT_APPROBATION_INS) */
   constraint PK_TP2_INSCRIPTION_CONFERENCE primary key (SIGLE_CONFERENCE, NO_MEMBRE),
   constraint FK_TP2_INSCRIPTION_CONFERENCE_SIGLE_CONFERENCE foreign key (SIGLE_CONFERENCE)
 	references TP2_CONFERENCE (SIGLE_CONFERENCE),
@@ -259,7 +259,7 @@ create sequence NO_RAPPORT_SEQ
   
   /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
   
-  /****** Table MEMBRE ********/
+  /************ Table TP2_MEMBRE ********************/
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -270,7 +270,7 @@ create sequence NO_RAPPORT_SEQ
   values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'USA', '(514)299-3569','(514)399-4569','Francais','Nom_fichier_photo_1','earthlink.net','NASA','talpe0@earthlink.net', 1550 ,0,0,1);
   
   
-  /****************** Table PROJET ************/
+  /****************** Table TP2_PROJET ******************/
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
   values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Initiale', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
@@ -278,8 +278,52 @@ create sequence NO_RAPPORT_SEQ
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
   values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Initiale', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
   
+  
   /****************** Table TP2_EQUIPE_PROJET **********/
   
   insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (5, 1000, 1);
   
   insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (10, 1001, 1);
+  
+  
+  /*************** Table TP2_NOTIFICATION **************/
+  
+  insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+  values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+  
+  insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+  values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Débuté', 'Note notification_1', 1000, 1001);
+  
+  
+   /*************** Table TP2_RAPPORT_ETAT **************/
+   
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCD', 'NOM_ETAT_RAPPORT_1');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCE', 'NOM_ETAT_RAPPORT_2');
+  
+  
+  /************** Table TP2_RAPPORT ********************/
+  
+  insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+  values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', 'NOM_FICHIER_RAPPORT_1', to_date('15-10-02','RR-MM-DD'), 'ABCD');
+  
+  insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+  values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', 'NOM_FICHIER_RAPPORT_2', to_date('15-10-01','RR-MM-DD'), 'ABCD');
+  
+  
+  /************* Table TP2_CONFERENCE ********************/
+  
+  insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+  values ('CONF_1', 'TITRE_1', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'YAOUNDÉ', '22 RUE DE DOUALA AKOUA');
+  
+  insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+  values ('CON_2', 'TITRE_2', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'MONTRÉAL', '40 RUE GALT MONTREAL canada');
+  
+  
+  /************* TP2_INSCRIPTION_CONFERENCE *************/
+  
+  insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
+  values ('CONF_1', 15,  to_date('15-04-03','RR-MM-DD'), 1);
+  
+    insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
+  values ('CONF_1', 20,  to_date('15-04-03','RR-MM-DD'), 1);
