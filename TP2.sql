@@ -380,7 +380,7 @@ create sequence NO_RAPPORT_SEQ
     
       select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
-        where M.NO_MEMBRE = P.NO_MEMBRE and EST_DIRECTEUR_PRO = 1 and M.NO_MEMBRE 
+        where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1 and M.NO_MEMBRE 
         not in (select NO_MEMBRE 
                     from TP2_EQUIPE_PROJET 
                     where EST_DIRECTEUR_PRO = 1 
@@ -403,7 +403,13 @@ create sequence NO_RAPPORT_SEQ
          
     /******************** Question j)iii) Utilisant un not exists *******************/
         
-     
+       select M.NOM_MEM, M.PRENOM_MEM 
+        from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
+            where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1 and not exists (select * 
+                                                                                            from TP2_EQUIPE_PROJET P
+                                                                                            where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
+                                                                                            group by P.NO_MEMBRE 
+                                                                                            having count(P.NO_PROJET) > 1); 
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
