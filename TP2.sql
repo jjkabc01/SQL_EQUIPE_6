@@ -282,9 +282,9 @@ create sequence NO_RAPPORT_SEQ
   
   /****************** Table TP2_EQUIPE_PROJET **********/
   
-  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1000, 1);
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1000, 1);
   
-  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1001, 0);
+  insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1001, 1);
   
   select * from TP2_EQUIPE_PROJET;
   
@@ -372,18 +372,29 @@ create sequence NO_RAPPORT_SEQ
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
-                                                 /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
-    /******************** Question j)i) Utilisant un not in. **************************/
+                                                 /******************* Question h) afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et «Paul»  *********************/
+    /******************** Question h)i) À l'aide d'un in **************************/
     
-    /******************** Question j)i) Utilisant un minus (équivalent Oracle de except) *******************/
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1001, 1);
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
     
-    /******************** Question j)i) Utilisant un not exists *******************/
+      select M.NOM_MEM, M.PRENOM_MEM from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
+        where M.NO_MEMBRE = P.NO_MEMBRE and M.NO_MEMBRE 
+        not in (select NO_MEMBRE from TP2_EQUIPE_PROJET 
+                    where EST_DIRECTEUR_PRO = 1 
+                    group by NO_MEMBRE 
+                    having count(NO_PROJET) > 1);
+    
+    /******************** Question h)ii) À l'aide d'une jointure *******************/
+    
+    /******************** Question h)iii) À l'aide d'un exists *******************/
         
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
    
-   delete from TP2_MEMBRE where NO_MEMBRE = 5;
+   delete from TP2_MEMBRE 
+    where NO_MEMBRE = 5;
    
    /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
