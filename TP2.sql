@@ -378,14 +378,23 @@ create sequence NO_RAPPORT_SEQ
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1001, 1);
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
     
-      select M.NOM_MEM, M.PRENOM_MEM from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
-        where M.NO_MEMBRE = P.NO_MEMBRE and M.NO_MEMBRE 
-        not in (select NO_MEMBRE from TP2_EQUIPE_PROJET 
-                    where EST_DIRECTEUR_PRO = 1 
-                    group by NO_MEMBRE 
-                    having count(NO_PROJET) > 1);
+      select M.NOM_MEM, M.PRENOM_MEM 
+        from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
+            where M.NO_MEMBRE = P.NO_MEMBRE and EST_DIRECTEUR_PRO = 1 and M.NO_MEMBRE 
+            not in (select NO_MEMBRE 
+                    from TP2_EQUIPE_PROJET 
+                        where EST_DIRECTEUR_PRO = 1 
+                        group by NO_MEMBRE 
+                        having count(NO_PROJET) > 1);
     
     /******************** Question h)ii) À l'aide d'une jointure *******************/
+    
+    select M.NOM_MEM, M.PRENOM_MEM 
+        from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
+            where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
+            group by M.NOM_MEM, M.PRENOM_MEM  
+            having count(P.NO_PROJET) < 2;
+         
     
     /******************** Question h)iii) À l'aide d'un exists *******************/
         
@@ -393,12 +402,11 @@ create sequence NO_RAPPORT_SEQ
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
    
-   delete from TP2_MEMBRE 
-    where NO_MEMBRE = 5;
+   delete from TP2_MEMBRE where NO_MEMBRE = 5;
    
    /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
    update TP2_MEMBRE
-    set EST_APPOUVEE_INSCRIPTION_MEM = 1
-    where NO_MEMBRE = 10;
+   	set EST_APPOUVEE_INSCRIPTION_MEM = 1
+   	where NO_MEMBRE = 10;
     
