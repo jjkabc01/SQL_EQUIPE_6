@@ -372,32 +372,38 @@ create sequence NO_RAPPORT_SEQ
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
-                                                 /******************* Question h) afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et «Paul»  *********************/
-    /******************** Question h)i) À l'aide d'un in **************************/
+                                                  /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
+    /******************** Question j)i) Utilisant un not in. **************************/
     
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1001, 1);
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
     
       select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
-            where M.NO_MEMBRE = P.NO_MEMBRE and EST_DIRECTEUR_PRO = 1 and M.NO_MEMBRE 
-            not in (select NO_MEMBRE 
+        where M.NO_MEMBRE = P.NO_MEMBRE and EST_DIRECTEUR_PRO = 1 and M.NO_MEMBRE 
+        not in (select NO_MEMBRE 
                     from TP2_EQUIPE_PROJET 
-                        where EST_DIRECTEUR_PRO = 1 
-                        group by NO_MEMBRE 
-                        having count(NO_PROJET) > 1);
+                    where EST_DIRECTEUR_PRO = 1 
+                    group by NO_MEMBRE 
+                    having count(NO_PROJET) > 1);
     
-    /******************** Question h)ii) À l'aide d'une jointure *******************/
-    
-    select M.NOM_MEM, M.PRENOM_MEM 
+     /******************** Question j)ii) Utilisant un minus (équivalent Oracle de except) *******************/
+     
+    select distinct M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
-            where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
-            group by M.NOM_MEM, M.PRENOM_MEM  
-            having count(P.NO_PROJET) < 2;
+            where M.NO_MEMBRE = (select NO_MEMBRE 
+                                    from TP2_EQUIPE_PROJET 
+                                    where EST_DIRECTEUR_PRO = 1
+                                    minus
+                                    select NO_MEMBRE 
+                                        from TP2_EQUIPE_PROJET 
+                                        where EST_DIRECTEUR_PRO = 1 
+                                        group by NO_MEMBRE 
+                                        having count(NO_PROJET) > 1 );   
          
-    
-    /******************** Question h)iii) À l'aide d'un exists *******************/
+    /******************** Question j)iii) Utilisant un not exists *******************/
         
+     
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
