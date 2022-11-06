@@ -337,6 +337,23 @@ create sequence NO_RAPPORT_SEQ
     
   select * from TP2_INSCRIPTION_CONFERENCE;
   
+  
+  
+  
+  /******* Question 1c) Donnez 1 requêtes d’insertion SQL valide (au total et non 1 par table) de la forme insert select qui copie la conference CRIP2022 dans l'evenement CRIP2023 en ajoutant 1 an aux dates.  ***********/
+
+  insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON) 
+  values ('CRIP2022','La conference', to_date('2022-11-04','RRRR-MM-DD'), to_date('2022-12-10','RRRR-MM-DD'),'Quebec','2325 Rue de Universite');
+  
+  insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    select 'CRIP2023', TITRE_CON, '2023-11-04', '2023-12-10', LIEU_CON, ADRESSE_CON
+    from TP2_CONFERENCE;
+    
+    
+  
+  
+  
+  
   /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
