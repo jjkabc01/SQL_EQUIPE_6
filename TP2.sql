@@ -1,4 +1,4 @@
-  /**** TP2 *******/ 
+ /**** TP2 *******/ 
 
 
 
@@ -421,4 +421,21 @@ create sequence NO_RAPPORT_SEQ
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+   	
+   	/******************* Question 2) b) Fonction FCT_MOYENNE_MNT_ALLOUE qui reçoit en paramètre un numéro de membre et retourne le montant moyen alloué pour tous ses projets **************/
+   	
+    create or replace function FCT_MOYENNE_MNT_ALLOUE(V_NO_MEMBRE in number) return number
+    is 
+        V_MNT_MOYEN number (9,2);
+    begin
+        select avg(P.MNT_ALLOUE_PRO) into V_MNT_MOYEN
+            from TP2_PROJET P, TP2_EQUIPE_PROJET E
+            where P.NO_PROJET = E.NO_PROJET and E.NO_MEMBRE = V_NO_MEMBRE
+            group by E.NO_MEMBRE;
+            return V_MNT_MOYEN;
+        
+    end FCT_MOYENNE_MNT_ALLOUE;
+    /
+    
+    select FCT_MOYENNE_MNT_ALLOUE(20) from DUAL;
     
