@@ -48,14 +48,9 @@ create table TP2_MEMBRE (
   constraint AK_TP2_MEMBRE_NOM_MEM unique (NOM_MEM),
   constraint AK_TP2_MEMBRE_ADRESSE_MEM unique (ADRESSE_MEM),
   constraint AK_TP2_MEMBRE_CODE_POSTAL_MEM unique (CODE_POSTAL_MEM),
-  constraint PK_TP2_MEMBRE primary key (NO_MEMBRE)
-
-/** table reference  clé étrangère inexistante à touver
-
-  constraint FK_MEMBRE foreign key (NO_MEMBRE_PATRON) 
-				references TP2_MEMBRE (NO_MEMBRE_PATRON) on delete set null
-**/
-	
+  constraint PK_TP2_MEMBRE primary key (NO_MEMBRE),
+  constraint FK_TP2_MEMBRE foreign key (NO_MEMBRE_PATRON) 
+				references TP2_MEMBRE (NO_MEMBRE)	
  );
 
 
@@ -63,11 +58,11 @@ create table TP2_PROJET (
   NO_PROJET number(10) not null, 
   NOM_PRO varchar2(30) not null,
   MNT_ALLOUE_PRO number(9,2) default 0.0 not null, 
-  STATUT_PRO varchar2(30) default 'Non débuté' not null,
+  STATUT_PRO varchar2(30) default 'Débuté' not null,
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
   constraint PK_TP2_PROJET primary key (NO_PROJET),
-  constraint CT_STATUT_PRO check (STATUT_PRO in ('Non débuté', 'En cours', 'Terminé')),
+  constraint CT_STATUT_PRO check (STATUT_PRO in ('Débuté', ' En vérification', 'En correction', 'Terminé')),
   constraint CT_MNT_ALLOUE_PRO_SUPERIEUR_EGAL_0 check(MNT_ALLOUE_PRO >= 0),
   constraint CT_DATE_FIN_PRO_SUPERIEUR_DATE_DEBUT_PRO check (DATE_FIN_PRO > DATE_DEBUT_PRO)
   
@@ -95,15 +90,11 @@ create table TP2_NOTIFICATION (
   NO_MEM_ADMIN_CREATION number(10) not null,
   NO_MEM_ATTRIBUTION number(10) not null,
   constraint PK_TP2_NOTIFICATION primary key (NO_NOTIFICATION),
-  constraint CT_ETAT_NOT check (ETAT_NOT in ('Non débutée', 'En cours', 'À approuver ', 'Terminée'))
-  
-/* table reference  clé étrangère inexistante à touver
-
-  constraint FK_NOTIFICATION_NO_MEM_ADMIN_CREATION foreign key (NO_MEM_ADMIN_CREATION) 
-				references TP2_NOTIFICATION (NO_MEM_ADMIN_CREATION),
-  constraint FK_NOTIFICATION foreign key (NO_MEM_ATTRIBUTION) 
-				references  TP2_NOTIFICATION (NO_MEM_ATTRIBUTION),
-  */
+  constraint CT_ETAT_NOT check (ETAT_NOT in ('Non débutée', 'En cours', 'À approuver ', 'Terminée')),
+  constraint FK_TP2_NOTIFICATION_NO_MEM_ADMIN_CREATION foreign key (NO_MEM_ADMIN_CREATION) 
+				references TP2_MEMBRE (NO_MEMBRE),
+  constraint FK_TP2_NOTIFICATION_NO_MEM_ATTRIBUTION foreign key (NO_MEM_ATTRIBUTION) 
+				references  TP2_MEMBRE(NO_MEMBRE)
   
 );
 
@@ -201,12 +192,12 @@ create sequence NO_RAPPORT_SEQ
     
     insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com', 1500 ,1,0,1);
+  values ( NO_MEMBRE_SEQ.nextval, 'admin', 'admin', 'admin', 'admin', 'admin hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j6', 'admin', '(514)699-2569','(514)699-2569','francais','admin','admin','admin','admin@cipre.com', 5 ,1,0,1);
   
   
       insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-  values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com', 1500 ,0,1,1);
+  values ( NO_MEMBRE_SEQ.nextval, 'superviseur', 'superviseur', 'superviseur', 'superviseur', 'superviseur hdhdg gdgd gdgg dggd ggdgd', 'h3e 1j7', 'cipre', '(514)699-2569','(514)699-2569','francais','superviseur','superviseur','superviseur','superviseur@cipre.com', 5 ,0,1,1);
   
   select * from VUE_ADMINISTRATEUR;
     
@@ -262,21 +253,21 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 1550 ,1,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 5 ,1,0,1);
   
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'CANADA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','CRA','talpe0@earthlink.net', 1550 ,0,1,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'Thayne.Alpe', FCT_GENERER_MOT_DE_PASSE(7), 'Thayne', 'Alpe', '46 Straubel Pass 4 Sauthoff Circle', 'h2e 1j8', 'CANADA', '(514)299-3569','(514)399-4569','Francais','/membre2.png','earthlink.net','CRA','talpe0@earthlink.net', 5 ,0,1,1);
   
   select * from TP2_MEMBRE;
   
   /****************** Table TP2_PROJET ******************/
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Non débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Non débuté', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Débuté', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
   
   select * from TP2_PROJET;
   
@@ -291,10 +282,10 @@ create sequence NO_RAPPORT_SEQ
   /*************** Table TP2_NOTIFICATION **************/
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_1', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 5, 10);
   
   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 1000, 1001);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 5, 10);
   
   select * from TP2_NOTIFICATION;
   
@@ -414,7 +405,8 @@ create sequence NO_RAPPORT_SEQ
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
    
-   delete from TP2_MEMBRE where NO_MEMBRE = 5;
+   /*à refaire*/
+  /* delete from TP2_MEMBRE where NO_MEMBRE = 25; */
    
    /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
@@ -442,3 +434,74 @@ create sequence NO_RAPPORT_SEQ
     /******************** Question 2) c) procédure stockée SP_ARCHIVER_PROJET qui reçoit en paramètre une date et déplace tous les projets dans une nouvelle table PROJET_ARCHIVE et leurs rapports dans la table RAPPORT_ARCHIVE. **********/
     
     /******************** Creation des Tables PROJET_ARCHIVE et RAPPORT_ARCHIVE ******************/
+    
+    drop table TP2_PROJET_ARCHIVE cascade constraints;
+    drop table TP2_RAPPORT_ARCHIVE cascade constraints;
+    
+    create table TP2_PROJET_ARCHIVE (
+      NO_PROJET number(10) not null, 
+      NOM_PRO varchar2(30) not null,
+      MNT_ALLOUE_PRO number(9,2) default 0.0 not null, 
+      STATUT_PRO varchar2(30) default 'Initiale' not null,
+      DATE_DEBUT_PRO date not null,
+      DATE_FIN_PRO date not null,
+      constraint PK_TP2_PROJET_ARCHIVE primary key (NO_PROJET)
+);
+    
+    create table TP2_RAPPORT_ARCHIVE (
+      NO_RAPPORT number(10) not null,
+      NO_PROJET number(10) not null,
+      TITRE_RAP varchar2(30) not null,
+      NOM_FICHIER_RAP varchar2(200) not null, 
+      DATE_DEPOT_RAP date not null,
+      CODE_ETAT_RAP char(4) not null,
+      constraint PK_TP2_RAPPORT_ARCHIVE primary key (NO_RAPPORT),
+      constraint FK_TP2_RAPPORT_ARCHIVE_NO_PROJET foreign key (NO_PROJET) 
+                    references TP2_PROJET_ARCHIVE (NO_PROJET),
+      constraint FK_TP2_RAPPORT_ARCHIVE_CODE_ETAT_RAP foreign key (CODE_ETAT_RAP) 
+                    references TP2_RAPPORT_ETAT (CODE_ETAT_RAP)	
+);
+
+    /********* Création de la Procédure stockée SP_ARCHIVER_PROJET *************/
+    create or replace procedure SP_ARCHIVER_PROJET (V_DATE_PROJET date) is 
+        /*V_DATE_2_ANS date;*/
+        E_DATE_INVALIDE exception;
+    begin 
+        /*select (TRUNC(SYSDATE) - INTERVAL '2' YEAR) into V_DATE_2_ANS from DUAL ;*/
+        
+        if V_DATE_PROJET > (TRUNC(SYSDATE) - INTERVAL '2' YEAR)  then
+            raise E_DATE_INVALIDE;
+        end if;
+        
+        declare 
+            cursor ANCIEN_PROJET_CURSEUR is
+                select NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO 
+                    from TP2_PROJET
+                    where DATE_FIN_PRO < V_DATE_PROJET  and STATUT_PRO = 'Terminé'
+                    order by NO_PROJET asc;
+                    
+        begin
+            for ENR_PROJET in ANCIEN_PROJET_CURSEUR
+            loop 
+                insert into TP2_PROJET_ARCHIVE( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO) 
+                    values ( ENR_PROJET.NO_PROJET, ENR_PROJET.NOM_PRO, ENR_PROJET.MNT_ALLOUE_PRO, ENR_PROJET.STATUT_PRO, ENR_PROJET.DATE_DEBUT_PRO, ENR_PROJET.DATE_FIN_PRO);
+                    
+                delete from TP2_PROJET where NO_PROJET = ENR_PROJET.NO_PROJET;
+             
+                 insert into TP2_RAPPORT_ARCHIVE (NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+                    select NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP
+                        from TP2_RAPPORT
+                        where NO_PROJET = ENR_PROJET.NO_PROJET;
+                
+                delete from TP2_RAPPORT where NO_PROJET = ENR_PROJET.NO_PROJET;
+            end loop;
+                       
+    exception
+        When E_DATE_INVALIDE then
+            dbms_output.put_line('La date fournie dois être veille que 2 ans');
+    end;
+    
+    end SP_ARCHIVER_PROJET;
+  /
+
+  execute SP_ARCHIVER_PROJET(to_date('12-10-01','RR-MM-DD'));
