@@ -1,6 +1,6 @@
  /**** TP2 *******/ 
 
-
+SET SERVEROUTPUT ON
 
 /***** Création des tables du cas CIPRÉ ******/
 
@@ -53,7 +53,7 @@ create table TP2_MEMBRE (
 /** table reference  clé étrangère inexistante à touver
 
   constraint FK_MEMBRE foreign key (NO_MEMBRE_PATRON) 
-				references MEMBRE (NO_MEMBRE_PATRON) on delete set null
+				references TP2_MEMBRE (NO_MEMBRE_PATRON) on delete set null
 **/
 	
  );
@@ -63,11 +63,11 @@ create table TP2_PROJET (
   NO_PROJET number(10) not null, 
   NOM_PRO varchar2(30) not null,
   MNT_ALLOUE_PRO number(9,2) default 0.0 not null, 
-  STATUT_PRO varchar2(30) default 'Initiale' not null,
+  STATUT_PRO varchar2(30) default 'Non débuté' not null,
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
   constraint PK_TP2_PROJET primary key (NO_PROJET),
-  constraint CT_STATUT_PRO check (STATUT_PRO in ('Initiale', 'Intermédiaire', 'Finale')),
+  constraint CT_STATUT_PRO check (STATUT_PRO in ('Non débuté', 'En cours', 'Terminé')),
   constraint CT_MNT_ALLOUE_PRO_SUPERIEUR_EGAL_0 check(MNT_ALLOUE_PRO >= 0),
   constraint CT_DATE_FIN_PRO_SUPERIEUR_DATE_DEBUT_PRO check (DATE_FIN_PRO > DATE_DEBUT_PRO)
   
@@ -100,9 +100,9 @@ create table TP2_NOTIFICATION (
 /* table reference  clé étrangère inexistante à touver
 
   constraint FK_NOTIFICATION_NO_MEM_ADMIN_CREATION foreign key (NO_MEM_ADMIN_CREATION) 
-				references TP1_MEMBRE (NO_MEM_ADMIN_CREATION),
+				references TP2_NOTIFICATION (NO_MEM_ADMIN_CREATION),
   constraint FK_NOTIFICATION foreign key (NO_MEM_ATTRIBUTION) 
-				references TP1_PROJET (NO_MEM_ATTRIBUTION),
+				references  TP2_NOTIFICATION (NO_MEM_ATTRIBUTION),
   */
   
 );
@@ -214,7 +214,7 @@ create sequence NO_RAPPORT_SEQ
   
   
 
-  /*********** Question 2b) Donnez la requête SQL qui crée une fonction nommée FCT_GENERER_MOT_DE_PASSE pour la génération des mot de passe des membres ***********/
+  /*********** Question 2d) Donnez la requête SQL qui crée une fonction nommée FCT_GENERER_MOT_DE_PASSE pour la génération des mot de passe des membres ***********/
   
  create or replace function FCT_GENERER_MOT_DE_PASSE(V_NB_CARACTERE in number) return varchar2
   is
@@ -273,10 +273,10 @@ create sequence NO_RAPPORT_SEQ
   /****************** Table TP2_PROJET ******************/
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Initiale', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_1', 3500000.23, 'Non débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
   
   insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Initiale', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
+    values (NO_PROJET_SEQ.nextval, 'Projet_2', 200000.23, 'Non débuté', to_date('15-06-01','RR-MM-DD'), to_date('15-09-01','RR-MM-DD'));
   
   select * from TP2_PROJET;
   
@@ -336,23 +336,6 @@ create sequence NO_RAPPORT_SEQ
     values ('CONF_1', 20,  to_date('15-04-03','RR-MM-DD'), 1);
     
   select * from TP2_INSCRIPTION_CONFERENCE;
-  
-  
-  
-  
-  /******* Question 1c) Donnez 1 requêtes d’insertion SQL valide (au total et non 1 par table) de la forme insert select qui copie la conference CRIP2022 dans l'evenement CRIP2023 en ajoutant 1 an aux dates.  ***********/
-
-  insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON) 
-  values ('CRIP2022','La conference', to_date('2022-11-04','RRRR-MM-DD'), to_date('2022-12-10','RRRR-MM-DD'),'Quebec','2325 Rue de Universite');
-  
-  insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    select 'CRIP2023', TITRE_CON, '2023-11-04', '2023-12-10', LIEU_CON, ADRESSE_CON
-    from TP2_CONFERENCE;
-    
-    
-  
-  
-  
   
   /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
@@ -456,3 +439,6 @@ create sequence NO_RAPPORT_SEQ
     
     select FCT_MOYENNE_MNT_ALLOUE(20) from DUAL;
     
+    /******************** Question 2) c) procédure stockée SP_ARCHIVER_PROJET qui reçoit en paramètre une date et déplace tous les projets dans une nouvelle table PROJET_ARCHIVE et leurs rapports dans la table RAPPORT_ARCHIVE. **********/
+    
+    /******************** Creation des Tables PROJET_ARCHIVE et RAPPORT_ARCHIVE ******************/
