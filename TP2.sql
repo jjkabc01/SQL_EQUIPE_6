@@ -329,7 +329,7 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_INSCRIPTION_CONFERENCE;
   
   
-  /************ Question 1c)   ****************/
+  /************ Question 1c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
   
   
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
