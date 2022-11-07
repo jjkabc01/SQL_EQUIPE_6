@@ -342,7 +342,7 @@ create sequence NO_RAPPORT_SEQ
         where SIGLE_CONFERENCE =  'CRIP2022';
         
         
-   /************ Question 1)d)  ***/
+   /************ Question 1)d) aime  ***/
    
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
     values ('CONF_4', 'TITRE_4', to_date('15-01-01','RR-MM-DD'), to_date('15-02-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
