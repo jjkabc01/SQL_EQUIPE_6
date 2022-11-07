@@ -313,7 +313,7 @@ create sequence NO_RAPPORT_SEQ
     values ('CONF_1', 'TITRE_1', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'YAOUNDÉ', '22 RUE DE DOUALA AKOUA');
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    values ('CON_2', 'TITRE_2', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'MONTRÉAL', '40 RUE GALT MONTREAL CANADA');
+    values ('CONF_2', 'TITRE_2', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'MONTRÉAL', '40 RUE GALT MONTREAL CANADA');
     
   select * from TP2_CONFERENCE;
   
@@ -324,7 +324,7 @@ create sequence NO_RAPPORT_SEQ
     values ('CONF_1', 15,  to_date('15-04-03','RR-MM-DD'), 1);
   
   insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
-    values ('CONF_1', 20,  to_date('15-04-03','RR-MM-DD'), 1);
+    values ('CONF_2', 20,  to_date('22-04-03','RR-MM-DD'), 1);
     
   select * from TP2_INSCRIPTION_CONFERENCE;
   
@@ -340,6 +340,22 @@ create sequence NO_RAPPORT_SEQ
     select 'CRIP2023', TITRE_CON, DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
         from TP2_CONFERENCE
         where SIGLE_CONFERENCE =  'CRIP2022';
+        
+        
+   /************ Question 1)d)  ***/
+   
+   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    values ('CONF_4', 'TITRE_4', to_date('15-01-01','RR-MM-DD'), to_date('15-02-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
+    ');
+    
+    insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
+    values ('CONF_4', 20,  to_date('15-04-03','RR-MM-DD'), 1);
+    
+  
+   delete C.SIGLE_CONFERENCE, I.SIGLE_CONFERENCE
+   from TP2_CONFERENCE C inner join TP2_INSCRIPTION_CONFERENCE I
+   on C.SIGLE_CONFERENCE = I.SIGLE_CONFERENCE where C.DATE_FIN_CON < (sysdate - 500);
+   
   
   /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
