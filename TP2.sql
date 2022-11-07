@@ -328,6 +328,19 @@ create sequence NO_RAPPORT_SEQ
     
   select * from TP2_INSCRIPTION_CONFERENCE;
   
+  
+  /************ Question 1c)   ****************/
+  
+  
+   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
+    
+  
+  insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    select 'CRIP2023', TITRE_CON, DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
+        from TP2_CONFERENCE
+        where SIGLE_CONFERENCE =  'CRIP2022';
+  
   /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
