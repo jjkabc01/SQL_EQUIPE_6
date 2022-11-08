@@ -329,7 +329,7 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_INSCRIPTION_CONFERENCE;
   
   
-  /************ Question 1c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
+  /************ Question 1) c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
   
   
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
@@ -342,7 +342,7 @@ create sequence NO_RAPPORT_SEQ
         where SIGLE_CONFERENCE =  'CRIP2022';
         
         
-   /************ Question 1)d)  ***/
+   /************ Question 1) d) 2 requêtes SQL qui effacent toutes les conférences et leurs inscriptions dont la date de fin est passée depuis plus de 500 jours.  ***/
    
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
         values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
@@ -361,7 +361,7 @@ create sequence NO_RAPPORT_SEQ
     from TP2_CONFERENCE where DATE_FIN_CON < (sysdate - 500);
    
   
-  /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
+  /************* Question 1) e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
     values ('CON_3', 'Congrès sur la pauvreté au Cambodge', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'STADE INTER SCOLAIRE', '1940 RUE DU PAVILLON CENTRAL');
@@ -373,7 +373,7 @@ create sequence NO_RAPPORT_SEQ
     
   select * from TP2_CONFERENCE;
     
- /************* Question 1i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
+ /************* Question 1)i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
  
  insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -397,7 +397,7 @@ create sequence NO_RAPPORT_SEQ
         order by NB_NOTIFICATION desc;
         
                                                   /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
-    /******************** Question j)i) Utilisant un not in. **************************/
+    /******************** Question 1) j)i) Utilisant un not in. **************************/
     
     insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
         values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
@@ -414,7 +414,7 @@ create sequence NO_RAPPORT_SEQ
                     group by NO_MEMBRE 
                     having count(NO_PROJET) > 1);
     
-     /******************** Question j)ii) Utilisant un minus (équivalent Oracle de except) *******************/
+     /******************** Question 1) j)ii) Utilisant un minus (équivalent Oracle de except) *******************/
      
     select distinct M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -428,7 +428,7 @@ create sequence NO_RAPPORT_SEQ
                                         group by NO_MEMBRE 
                                         having count(NO_PROJET) > 1 );   
          
-    /******************** Question j)iii) Utilisant un not exists *******************/
+    /******************** Question 1) j)iii) Utilisant un not exists *******************/
         
        select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -439,18 +439,54 @@ create sequence NO_RAPPORT_SEQ
                                                                                             having count(P.NO_PROJET) > 1); 
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
-   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
+   /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
    
     insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
         values ('CONF_TEST', 'TITRE_SUPPRIMER', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'ABIDJAN', '22 RUE DE LA VERENDRILLE');
    
     delete from TP2_CONFERENCE where SIGLE_CONFERENCE = 'CONF_TEST'; 
    
-   /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
+   /******************** Question 1) n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+    
+    
+     /*************************** 2)a)    ****************************************/
+  
+      create or replace trigger TRG_BIU_DIRECTEUR_PROJET
+            before insert or update of EST_DIRECTEUR_PRO on TP2_EQUIPE_PROJET
+            for each row 
+       declare
+            V_NB_DIRECTEUR_PROJET number(1);
+      begin 
+            select count(*) into V_NB_DIRECTEUR_PROJET
+                from TP2_EQUIPE_PROJET
+            where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
+            
+            if V_NB_DIRECTEUR_PROJET > 0 and :NEW.EST_DIRECTEUR_PRO = 1 then
+                raise_application_error(-20052, 'Ce projet à déjà un directeur');
+                end if;
+    end TRG_BIU_DIRECTEUR_PROJET;
+    /
+    
+    
+    insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_4', 1000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+        
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1003, 0);
+    
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1003, 1);
+    
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1003, 1);
+    
+    /*
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+    
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+    */
+
    	
    	/******************* Question 2) b) Fonction FCT_MOYENNE_MNT_ALLOUE qui reçoit en paramètre un numéro de membre et retourne le montant moyen alloué pour tous ses projets **************/
    	
@@ -545,34 +581,4 @@ create sequence NO_RAPPORT_SEQ
   execute SP_ARCHIVER_PROJET(to_date('12-10-01','RR-MM-DD'));
   
   
-  /*************************** 2)a)    ****************************************/
-  
-  create or replace trigger TRG_BIU_DIRECTEUR_PROJET
-        before insert or update of EST_DIRECTEUR_PRO on TP2_EQUIPE_PROJET
-        for each row 
-   declare
-        V_NB_DIRECTEUR_PROJET number(1);
-  begin 
-        select count(*) into V_NB_DIRECTEUR_PROJET
-            from TP2_EQUIPE_PROJET
-        where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
-        
-        if V_NB_DIRECTEUR_PROJET > 0 and :NEW.EST_DIRECTEUR_PRO = 1 then
-            raise_application_error(-20052, 'Ce projet à déjà un directeur');
-            end if;
-end TRG_BIU_DIRECTEUR_PROJET;
-/
-
-
-insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_4', 1000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
-    
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1003, 0);
-
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1003, 1);
-
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1003, 1);
-
-update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1003 and NO_MEMBRE = 15;
-
-update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+ 
