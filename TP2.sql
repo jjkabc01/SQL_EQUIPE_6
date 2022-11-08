@@ -380,6 +380,10 @@ create sequence NO_RAPPORT_SEQ
 	
 /******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
 
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'Fabrice.Camara', FCT_GENERER_MOT_DE_PASSE(7), 'Camara', 'Fabrice', '4 Derek Park 4 Bamenda Yaounde', 'g1v 1j8', 'Cameroun', '(514)699-3569','(514)699-4569','Anglais','/membre4.png','Cfabrice.com','NASA','fabrice.camara@cipre.com', 5 ,1,0,1);
+   
 
 select M.NO_NOTIFICATION, M.NOTE_NOT
 from TP2_NOTIFICATION M, TP2_MEMBRE N
@@ -425,7 +429,11 @@ where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
                                                                                             where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
                                                                                             group by P.NO_MEMBRE 
                                                                                             having count(P.NO_PROJET) > 1); 
-     
+     /*****Question 1k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans
+les 18 derniers mois (par rapport à sysdate)******/
+
+
+
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
    
