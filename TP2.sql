@@ -333,7 +333,7 @@ create sequence NO_RAPPORT_SEQ
   
   
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
+        values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
     
   
   insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
@@ -345,11 +345,11 @@ create sequence NO_RAPPORT_SEQ
    /************ Question 1)d)  ***/
    
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
+        values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
     ');
     
     insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
-    values ('CONF_4', 20,  to_date('21-08-15','RR-MM-DD'), 1);
+        values ('CONF_4', 20,  to_date('21-08-15','RR-MM-DD'), 1);
     
     delete
         from (select *  from TP2_INSCRIPTION_CONFERENCE I, TP2_CONFERENCE C
@@ -400,10 +400,10 @@ create sequence NO_RAPPORT_SEQ
     /******************** Question j)i) Utilisant un not in. **************************/
     
     insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+        values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
     
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1002, 1);
-    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
+        insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
     
       select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -439,10 +439,12 @@ create sequence NO_RAPPORT_SEQ
                                                                                             having count(P.NO_PROJET) > 1); 
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
-   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
+   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
    
-   /*à refaire*/
-  /* delete from TP2_MEMBRE where NO_MEMBRE = 25; */
+    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+        values ('CONF_TEST', 'TITRE_SUPPRIMER', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'ABIDJAN', '22 RUE DE LA VERENDRILLE');
+   
+    delete from TP2_CONFERENCE where SIGLE_CONFERENCE = 'CONF_TEST'; 
    
    /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
