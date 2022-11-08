@@ -396,6 +396,17 @@ create sequence NO_RAPPORT_SEQ
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
+	
+	
+/******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
+
+
+select M.NO_NOTIFICATION, M.NOTE_NOT
+from TP2_NOTIFICATION M, TP2_MEMBRE N
+where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
+
+	
+	
                                                   /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
     /******************** Question j)i) Utilisant un not in. **************************/
     
