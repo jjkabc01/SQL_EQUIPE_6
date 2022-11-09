@@ -216,6 +216,8 @@ create sequence NO_RAPPORT_SEQ
     
   begin 
   
+    V_NB_CARACTERE_FINALE := V_NB_CARACTERE;
+  
     if V_NB_CARACTERE < 7 then
         V_NB_CARACTERE_FINALE := 7;
     end if;
@@ -226,7 +228,7 @@ create sequence NO_RAPPORT_SEQ
      
     while V_QUIT_LOOP = 0
         loop
-            V_MOT_DE_PASSE := dbms_random.string('a', V_NB_CARACTERE-4) || substr('!?&$/|#', dbms_random.value (1, 8), 1 ) || dbms_random.string('x', 1)  || dbms_random.string('l', 1) ||  TRUNC(DBMS_RANDOM.value(1,9));
+            V_MOT_DE_PASSE := dbms_random.string('a', V_NB_CARACTERE_FINALE-4) || substr('!?&$/|#', dbms_random.value (1, 8), 1 ) || dbms_random.string('x', 1)  || dbms_random.string('l', 1) ||  TRUNC(DBMS_RANDOM.value(1,9));
             V_QUIT_LOOP := 1;
 
            if (regexp_count(V_MOT_DE_PASSE, '[a-z]') > 0
@@ -253,7 +255,7 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 5 ,1,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(14), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 5 ,1,0,1);
   
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -600,5 +602,20 @@ end SP_ARCHIVER_PROJET;
   execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
   
   
+  /**************** 2)e) requêtes PL/SQL stored procedure pour la réinitialisation d' un mot de passe temporaire à un utilisateur *****************/
   
-         
+  create or replace procedure SP_RÉINITIALISER_MOT_DE_PASSE (V_NO_MEMBRE number, V_NB_CARACTERE number) is
+  
+    begin        
+        update TP2_MEMBRE
+            set MOT_DE_PASSE_MEM = FCT_GENERER_MOT_DE_PASSE(V_NB_CARACTERE)
+            where NO_MEMBRE = V_NO_MEMBRE;
+        
+  end SP_RÉINITIALISER_MOT_DE_PASSE;
+  /
+   
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
+  
+  
+          
