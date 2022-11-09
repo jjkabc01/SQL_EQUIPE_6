@@ -498,6 +498,17 @@ select COURRIEL_MEM
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+	
+	
+/** Question n)iii) Une requete d'insertion à partir d'une selection **/
+
+
+	
+/** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
+	 alter table TP2_CONFERENCE
+    add ORGANISATEUR_CONF varchar2(40) null;
+    
+    
    	
    	/******************* Question 2) b) Fonction FCT_MOYENNE_MNT_ALLOUE qui reçoit en paramètre un numéro de membre et retourne le montant moyen alloué pour tous ses projets **************/
    	
