@@ -492,7 +492,7 @@ create sequence NO_RAPPORT_SEQ
    	
     create or replace function FCT_MOYENNE_MNT_ALLOUE(V_NO_MEMBRE in number) return number
     is 
-        V_MNT_MOYEN number (9,2);
+        V_MNT_MOYEN TP2_PROJET.MNT_ALLOUE_PRO%type;
     begin
         select avg(P.MNT_ALLOUE_PRO) into V_MNT_MOYEN
             from TP2_PROJET P, TP2_EQUIPE_PROJET E
@@ -537,48 +537,68 @@ create sequence NO_RAPPORT_SEQ
 );
 
     /********* Création de la Procédure stockée SP_ARCHIVER_PROJET *************/
-    create or replace procedure SP_ARCHIVER_PROJET (V_DATE_PROJET date) is 
-        /*V_DATE_2_ANS date;*/
-        E_DATE_INVALIDE exception;
+    create or replace procedure SP_ARCHIVER_PROJET (V_DATE_FIN_PROJET date) is 
+        V_DATE_2_ANS date;
+        
     begin 
-        /*select (TRUNC(SYSDATE) - INTERVAL '2' YEAR) into V_DATE_2_ANS from DUAL ;*/
-        
-        if V_DATE_PROJET > (TRUNC(SYSDATE) - INTERVAL '2' YEAR)  then
-            raise E_DATE_INVALIDE;
-        end if;
-        
+        select (TRUNC(SYSDATE) - INTERVAL '2' YEAR) into V_DATE_2_ANS from DUAL ;   
+
         declare 
+            E_DATE_INVALIDE exception;
+
             cursor ANCIEN_PROJET_CURSEUR is
                 select NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO 
                     from TP2_PROJET
-                    where DATE_FIN_PRO < V_DATE_PROJET  and STATUT_PRO = 'Terminé'
+                    where DATE_FIN_PRO < V_DATE_FIN_PROJET  and STATUT_PRO = 'Terminé'
                     order by NO_PROJET asc;
                     
         begin
+        
+         if V_DATE_FIN_PROJET > V_DATE_2_ANS then
+            raise E_DATE_INVALIDE;
+            end if;
+        
             for ENR_PROJET in ANCIEN_PROJET_CURSEUR
             loop 
                 insert into TP2_PROJET_ARCHIVE( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO) 
                     values ( ENR_PROJET.NO_PROJET, ENR_PROJET.NOM_PRO, ENR_PROJET.MNT_ALLOUE_PRO, ENR_PROJET.STATUT_PRO, ENR_PROJET.DATE_DEBUT_PRO, ENR_PROJET.DATE_FIN_PRO);
                     
-                delete from TP2_PROJET where NO_PROJET = ENR_PROJET.NO_PROJET;
-             
                  insert into TP2_RAPPORT_ARCHIVE (NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
                     select NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP
                         from TP2_RAPPORT
                         where NO_PROJET = ENR_PROJET.NO_PROJET;
                 
+                
                 delete from TP2_RAPPORT where NO_PROJET = ENR_PROJET.NO_PROJET;
+                
+                delete from TP2_PROJET where NO_PROJET = ENR_PROJET.NO_PROJET;
+                
+                
             end loop;
                        
-    exception
-        When E_DATE_INVALIDE then
-            dbms_output.put_line('La date fournie dois être veille que 2 ans');
-    end;
-    
-    end SP_ARCHIVER_PROJET;
+        exception
+            When E_DATE_INVALIDE then
+                dbms_output.put_line('La date fournie dois être veille que 2 ans');
+        end;
+        
+end SP_ARCHIVER_PROJET;
   /
 
-  execute SP_ARCHIVER_PROJET(to_date('12-10-01','RR-MM-DD'));
+ insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_5', 10000, 'Terminé', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));       
+        
+    insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_6', 11000, 'Terminé', to_date('11-01-01','RR-MM-DD'), to_date('11-06-15','RR-MM-DD'));
+        
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'ABCD');
+  
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'ABCD');
+        
+
+  execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
   
   
- 
+  
+         
