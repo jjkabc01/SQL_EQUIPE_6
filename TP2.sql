@@ -587,6 +587,13 @@ select COURRIEL_MEM
    	where NO_MEMBRE = 10;
     
     
+      /********* n)iii à revoir *****/
+  insert into TP2_NOTIFICATION (  NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION)
+    select N.NO_NOTIFICATION || '1', M.NOM_MEM, N.DATE_ECHEANCE_NOT, N.ETAT_NOT, N.NOTE_NOT, N.NO_MEM_ADMIN_CREATION, N.NO_MEM_ATTRIBUTION  
+        from TP2_NOTIFICATION N, TP2_MEMBRE M
+        where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.NO_MEMBRE = 25;
+        
+    
     /** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
 	 alter table TP2_CONFERENCE
     add ORGANISATEUR_CONF varchar2(40) null;
@@ -772,7 +779,7 @@ end SP_ARCHIVER_PROJET;
   
   
   
-  
+
   
   
   
