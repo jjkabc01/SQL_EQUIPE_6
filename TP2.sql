@@ -514,6 +514,32 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
                                                                                             where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
                                                                                             group by P.NO_MEMBRE 
                                                                                             having count(P.NO_PROJET) > 1); 
+                                                                                            
+                                                                                            
+    /*****Question 1k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans
+les 18 derniers mois (par rapport à sysdate)******/
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord parfait', 200030.23, 'Débuté', to_date('20-06-01','RR-MM-DD'), to_date('25-09-01','RR-MM-DD'));
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord imparfait', 200030.23, 'Débuté', to_date('21-06-01','RR-MM-DD'), to_date('24-09-01','RR-MM-DD'));
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1003, 'RAPPORT_Accord_parfait', '/fichierAcord.docx', to_date('22-10-01','RR-MM-DD'), 'DEBU');
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
+    
+
+select M.NOM_PRO, N.DATE_DEPOT_RAP 
+	from TP2_PROJET M, TP2_RAPPORT N
+	where M.NO_PROJET = N.NO_PROJET and N.DATE_DEPOT_RAP < (sysdate - interval '18' MONTH)
+
+    order by M.NOM_PRO asc;                                                                                        
+                                                                                                                                                                                                                                                                                                                                                         
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
