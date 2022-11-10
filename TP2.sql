@@ -1,4 +1,4 @@
- /**** TP2 *******/ 
+/**** TP2 *******/ 
 
 SET SERVEROUTPUT ON
 
@@ -102,8 +102,10 @@ create table TP2_NOTIFICATION (
 create table TP2_RAPPORT_ETAT (
   CODE_ETAT_RAP char(4) not null,
   NOM_ETAT_RAP varchar2(30) not null,
-  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP)
-  
+  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP),
+  constraint CT_CODE_ETAT_RAP check ( CODE_ETAT_RAP in ( 'DEBU', 'VERI', 'CORR', 'APPR')),
+  constraint CT_NOM_ETAT_RAP check ( NOM_ETAT_RAP in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
+   
 );
 
 create table TP2_RAPPORT (
@@ -293,19 +295,23 @@ create sequence NO_RAPPORT_SEQ
   
    /*************** Table TP2_RAPPORT_ETAT **************/
    
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCD', 'NOM_ETAT_RAPPORT_1');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'DEBU', 'Débuté');
   
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCE', 'NOM_ETAT_RAPPORT_2');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'VERI', 'En vérification');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'CORR', 'En correction');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'APPR', 'Approuvé');
   
   select * from TP2_RAPPORT_ETAT;
   
   /************** Table TP2_RAPPORT ********************/
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'DEBU');
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'DEBU');
   
   select * from TP2_RAPPORT;
   
@@ -374,6 +380,75 @@ create sequence NO_RAPPORT_SEQ
     where TITRE_CON = 'Congrès sur la pauvreté au Cambodge';
     
   select * from TP2_CONFERENCE;
+  
+  
+  /******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
+
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'Fabrice.Camara', FCT_GENERER_MOT_DE_PASSE(7), 'Camara', 'Fabrice', '4 Derek Park 4 Bamenda Yaounde', 'g1v 1j8', 'Cameroun', '(514)699-3569','(514)699-4569','Anglais','/membre4.png','Cfabrice.com','NASA','fabrice.camara@cipre.com', 5 ,1,0,1);
+   
+   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_3_CAM', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_3_CAM', 5, 25);
+
+select N.NO_NOTIFICATION, N.NOTE_NOT
+from TP2_NOTIFICATION N, TP2_MEMBRE M
+where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
+  
+  
+
+ /************ Question 1)g)requête SQL qui affiche le titre des rapports débutés en ordre décroissant de date de dépôt pour le projet « Économie au Sud soudan » **/ 
+ 
+ insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
+    
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    
+     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    
+ 
+  select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
+   from TP2_PROJET P, TP2_RAPPORT R
+   where P.NO_PROJET = R.NO_PROJET and NOM_PRO = 'Économie au Sud soudan' and R.CODE_ETAT_RAP = 'DEBU'
+   order by DATE_DEPOT_RAP desc;
+  
+  
+   /*********** Question 1h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
+   
+    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'thomas.paul', FCT_GENERER_MOT_DE_PASSE(7), 'Paul', 'Thomas', '10 boulevard Park 4 Sauthoff Circle', 'h3e 4t1', 'USA', '(514)699-1569','(514)199-4569','Anglais','/membre1.png','Jhondoes.com','NASA','thomas.paul@cipre.com', 5 ,1,0,1);
+  
+  
+    insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 25, 10);
+  
+  
+  /*1)h)i) avec un in */
+  select NOM_NOT, ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE in (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+
+
+  /** 1)h)ii)avec une jointure **/
+   select NOM_NOT, ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE = (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+                                                           
+ /* 1)h)iii) avec un exists */                                                         
+ select N.NOM_NOT, N.ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and M.NOM_MEM = 'Paul' and M.PRENOM_MEM = 'Thomas' and exists (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+                                                           
+  
     
  /************* Question 1)i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
  
@@ -439,6 +514,63 @@ create sequence NO_RAPPORT_SEQ
                                                                                             where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
                                                                                             group by P.NO_MEMBRE 
                                                                                             having count(P.NO_PROJET) > 1); 
+                                                                                            
+                                                                                            
+    /*****Question 1k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans
+les 18 derniers mois (par rapport à sysdate)******/
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord parfait', 200030.23, 'Débuté', to_date('20-06-01','RR-MM-DD'), to_date('25-09-01','RR-MM-DD'));
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord imparfait', 200030.23, 'Débuté', to_date('21-06-01','RR-MM-DD'), to_date('24-09-01','RR-MM-DD'));
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1003, 'RAPPORT_Accord_parfait', '/fichierAcord.docx', to_date('22-10-01','RR-MM-DD'), 'DEBU');
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
+    
+
+select M.NOM_PRO, N.DATE_DEPOT_RAP 
+	from TP2_PROJET M, TP2_RAPPORT N
+	where M.NO_PROJET = N.NO_PROJET and N.DATE_DEPOT_RAP < (sysdate - interval '18' MONTH)
+
+    order by M.NOM_PRO asc;                
+    
+    
+    
+    /***** Question 1) L) Pour afficher les courriels des administrateurs dont le courriel termine par .ca qui sont aussi des courriels de
+de superviseurs sans téléphone. Une seule colonne sera affichée. ***/
+
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+    NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'jackson.Mike', FCT_GENERER_MOT_DE_PASSE(7), 'Mike', 'Jackson', '9 Derek Park 4 Sauthoff Court', 'g3e 1j8', 'CANADA', '(418)699-3569','(418)699-4569','Anglais','/membreJack.png','MJackson.com','NASA','mike.jackson@ulaval.ca', 5 ,1,0,1);
+
+/****i) Donnez la requête utilisant un intersect. **/
+
+(select COURRIEL_MEM from TP2_MEMBRE
+where EST_ADMINISTRATEUR_MEM = 1)
+intersect
+(select COURRIEL_MEM from TP2_MEMBRE
+where COURRIEL_MEM like '%.ca');
+
+/**ii) Donnez la requête utilisant un exists. **/
+
+select COURRIEL_MEM from TP2_MEMBRE M
+where exists (select COURRIEL_MEM from TP2_MEMBRE N 
+                where EST_ADMINISTRATEUR_MEM = 1 and M.COURRIEL_MEM = N.COURRIEL_MEM and COURRIEL_MEM like '%.ca');
+
+/**iii) Donnez la requête utilisant un in **/
+select COURRIEL_MEM 
+    from TP2_MEMBRE
+    where EST_ADMINISTRATEUR_MEM = 1 
+    and COURRIEL_MEM in (select COURRIEL_MEM
+                            from TP2_MEMBRE
+                            where COURRIEL_MEM like '%.ca');      
+                            
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
@@ -453,6 +585,18 @@ create sequence NO_RAPPORT_SEQ
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+    
+    
+      /********* n)iii à revoir *****/
+  insert into TP2_NOTIFICATION (  NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION)
+    select N.NO_NOTIFICATION || '1', M.NOM_MEM, N.DATE_ECHEANCE_NOT, N.ETAT_NOT, N.NOTE_NOT, N.NO_MEM_ADMIN_CREATION, N.NO_MEM_ATTRIBUTION  
+        from TP2_NOTIFICATION N, TP2_MEMBRE M
+        where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.NO_MEMBRE = 25;
+        
+    
+    /** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
+	 alter table TP2_CONFERENCE
+    add ORGANISATEUR_CONF varchar2(40) null;
     
     
      /*************************** 2)a)    ****************************************/
@@ -593,10 +737,10 @@ end SP_ARCHIVER_PROJET;
         values (NO_PROJET_SEQ.nextval, 'Projet_6', 11000, 'Terminé', to_date('11-01-01','RR-MM-DD'), to_date('11-06-15','RR-MM-DD'));
         
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'ABCD');
+        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'DEBU');
   
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'ABCD');
+        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'DEBU');
         
 
   execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
@@ -616,6 +760,19 @@ end SP_ARCHIVER_PROJET;
    
    execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
    execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
-  
-  
-          
+   
+   
+   
+   
+    /***question 1.m**/
+
+  select lpad(' ', LEVEL * 2, ' ')||PRENOM_MEM, NOM_MEM, TEL_MEM|| ' ' ||COURRIEL_MEM as ARBRE,
+         NO_MEMBRE, NO_MEMBRE_PATRON,
+         sys_connect_by_path(UTILISATEUR_MEM, '/') as CHEMIN,
+         level as NIVEAU
+      from TP2_MEMBRE
+      connect by prior NO_MEMBRE = NO_MEMBRE_PATRON 
+      start with NO_MEMBRE_PATRON is null;
+      
+  col ARBRE format a40
+  col CHEMIN format a40
