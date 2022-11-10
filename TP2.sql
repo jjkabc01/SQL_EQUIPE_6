@@ -102,8 +102,10 @@ create table TP2_NOTIFICATION (
 create table TP2_RAPPORT_ETAT (
   CODE_ETAT_RAP char(4) not null,
   NOM_ETAT_RAP varchar2(30) not null,
-  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP)
-  
+  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP),
+  constraint CT_CODE_ETAT_RAP check ( CODE_ETAT_RAP in ( 'DEBU', 'VERI', 'CORR', 'APPR')),
+  constraint CT_NOM_ETAT_RAP check ( NOM_ETAT_RAP in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
+   
 );
 
 create table TP2_RAPPORT (
@@ -293,19 +295,23 @@ create sequence NO_RAPPORT_SEQ
   
    /*************** Table TP2_RAPPORT_ETAT **************/
    
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCD', 'NOM_ETAT_RAPPORT_1');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'DEBU', 'Débuté');
   
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCE', 'NOM_ETAT_RAPPORT_2');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'VERI', 'En vérification');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'CORR', 'En correction');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'APPR', 'Approuvé');
   
   select * from TP2_RAPPORT_ETAT;
   
   /************** Table TP2_RAPPORT ********************/
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'DEBU');
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'DEBU');
   
   select * from TP2_RAPPORT;
   
@@ -376,7 +382,26 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_CONFERENCE;
   
   
-   /*1h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
+
+ /************ Question 1)g)requête SQL qui affiche le titre des rapports débutés en ordre décroissant de date de dépôt pour le projet « Économie au Sud soudan » **/ 
+ 
+ insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
+    
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1006, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    
+     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1006, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    
+ 
+  select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
+   from TP2_PROJET P, TP2_RAPPORT R
+   where P.NO_PROJET = R.NO_PROJET and NOM_PRO = 'Économie au Sud soudan' and R.CODE_ETAT_RAP = 'DEBU'
+   order by DATE_DEPOT_RAP desc;
+  
+  
+   /*********** Question 1h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
    
     insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -629,10 +654,10 @@ end SP_ARCHIVER_PROJET;
         values (NO_PROJET_SEQ.nextval, 'Projet_6', 11000, 'Terminé', to_date('11-01-01','RR-MM-DD'), to_date('11-06-15','RR-MM-DD'));
         
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'ABCD');
+        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'DEBU');
   
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'ABCD');
+        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'DEBU');
         
 
   execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
@@ -652,12 +677,6 @@ end SP_ARCHIVER_PROJET;
    
    execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
    execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
-  
-  
-  
-  
-  
-  
-  
-  
- 
+   
+   
+   
