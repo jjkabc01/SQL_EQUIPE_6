@@ -1,4 +1,4 @@
- /**** TP2 *******/ 
+/**** TP2 *******/ 
 
 SET SERVEROUTPUT ON
 
@@ -102,8 +102,10 @@ create table TP2_NOTIFICATION (
 create table TP2_RAPPORT_ETAT (
   CODE_ETAT_RAP char(4) not null,
   NOM_ETAT_RAP varchar2(30) not null,
-  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP)
-  
+  constraint PK_TP2_RAPPORT_ETAT primary key (CODE_ETAT_RAP),
+  constraint CT_CODE_ETAT_RAP check ( CODE_ETAT_RAP in ( 'DEBU', 'VERI', 'CORR', 'APPR')),
+  constraint CT_NOM_ETAT_RAP check ( NOM_ETAT_RAP in ('Débuté', 'En vérification', 'En correction', 'Approuvé'))
+   
 );
 
 create table TP2_RAPPORT (
@@ -216,6 +218,8 @@ create sequence NO_RAPPORT_SEQ
     
   begin 
   
+    V_NB_CARACTERE_FINALE := V_NB_CARACTERE;
+  
     if V_NB_CARACTERE < 7 then
         V_NB_CARACTERE_FINALE := 7;
     end if;
@@ -226,7 +230,7 @@ create sequence NO_RAPPORT_SEQ
      
     while V_QUIT_LOOP = 0
         loop
-            V_MOT_DE_PASSE := dbms_random.string('a', V_NB_CARACTERE-4) || substr('!?&$/|#', dbms_random.value (1, 8), 1 ) || dbms_random.string('x', 1)  || dbms_random.string('l', 1) ||  TRUNC(DBMS_RANDOM.value(1,9));
+            V_MOT_DE_PASSE := dbms_random.string('a', V_NB_CARACTERE_FINALE-4) || substr('!?&$/|#', dbms_random.value (1, 8), 1 ) || dbms_random.string('x', 1)  || dbms_random.string('l', 1) ||  TRUNC(DBMS_RANDOM.value(1,9));
             V_QUIT_LOOP := 1;
 
            if (regexp_count(V_MOT_DE_PASSE, '[a-z]') > 0
@@ -253,7 +257,7 @@ create sequence NO_RAPPORT_SEQ
   
   insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
-    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(7), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 5 ,1,0,1);
+    values ( NO_MEMBRE_SEQ.nextval, 'john.doe', FCT_GENERER_MOT_DE_PASSE(14), 'Doe', 'John', '4 Derek Park 4 Sauthoff Circle', 'h3e 1j8', 'USA', '(514)699-3569','(514)699-4569','Anglais','/membre1.png','Jhondoes.com','NASA','john.doe@cipre.com', 5 ,1,0,1);
   
    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -291,19 +295,23 @@ create sequence NO_RAPPORT_SEQ
   
    /*************** Table TP2_RAPPORT_ETAT **************/
    
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCD', 'NOM_ETAT_RAPPORT_1');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'DEBU', 'Débuté');
   
-  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'ABCE', 'NOM_ETAT_RAPPORT_2');
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'VERI', 'En vérification');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'CORR', 'En correction');
+  
+  insert into TP2_RAPPORT_ETAT ( CODE_ETAT_RAP, NOM_ETAT_RAP) values ( 'APPR', 'Approuvé');
   
   select * from TP2_RAPPORT_ETAT;
   
   /************** Table TP2_RAPPORT ********************/
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1000, 'RAPPORT_1', '/fichier1.docx', to_date('15-10-02','RR-MM-DD'), 'DEBU');
   
   insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'ABCD');
+    values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichier2.docx', to_date('15-10-01','RR-MM-DD'), 'DEBU');
   
   select * from TP2_RAPPORT;
   
@@ -329,11 +337,11 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_INSCRIPTION_CONFERENCE;
   
   
-  /************ Question 1c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
+  /************ Question 1) c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
   
   
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
+        values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
     
   
   insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
@@ -342,14 +350,14 @@ create sequence NO_RAPPORT_SEQ
         where SIGLE_CONFERENCE =  'CRIP2022';
         
         
-   /************ Question 1)d)  ***/
+   /************ Question 1) d) 2 requêtes SQL qui effacent toutes les conférences et leurs inscriptions dont la date de fin est passée depuis plus de 500 jours.  ***/
    
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
+        values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
     ');
     
     insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
-    values ('CONF_4', 20,  to_date('21-08-15','RR-MM-DD'), 1);
+        values ('CONF_4', 20,  to_date('21-08-15','RR-MM-DD'), 1);
     
     delete
         from (select *  from TP2_INSCRIPTION_CONFERENCE I, TP2_CONFERENCE C
@@ -361,7 +369,7 @@ create sequence NO_RAPPORT_SEQ
     from TP2_CONFERENCE where DATE_FIN_CON < (sysdate - 500);
    
   
-  /************* Question 1e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
+  /************* Question 1) e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
     values ('CON_3', 'Congrès sur la pauvreté au Cambodge', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'STADE INTER SCOLAIRE', '1940 RUE DU PAVILLON CENTRAL');
@@ -372,8 +380,63 @@ create sequence NO_RAPPORT_SEQ
     where TITRE_CON = 'Congrès sur la pauvreté au Cambodge';
     
   select * from TP2_CONFERENCE;
+  
+  
+
+ /************ Question 1)g)requête SQL qui affiche le titre des rapports débutés en ordre décroissant de date de dépôt pour le projet « Économie au Sud soudan » **/ 
+ 
+ insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
     
- /************* Question 1i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    
+     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    
+ 
+  select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
+   from TP2_PROJET P, TP2_RAPPORT R
+   where P.NO_PROJET = R.NO_PROJET and NOM_PRO = 'Économie au Sud soudan' and R.CODE_ETAT_RAP = 'DEBU'
+   order by DATE_DEPOT_RAP desc;
+  
+  
+   /*********** Question 1h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
+   
+    insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'thomas.paul', FCT_GENERER_MOT_DE_PASSE(7), 'Paul', 'Thomas', '10 boulevard Park 4 Sauthoff Circle', 'h3e 4t1', 'USA', '(514)699-1569','(514)199-4569','Anglais','/membre1.png','Jhondoes.com','NASA','thomas.paul@cipre.com', 5 ,1,0,1);
+  
+  
+    insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 25, 10);
+  
+  
+  /*1)h)i) avec un in */
+  select NOM_NOT, ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE in (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+
+
+  /** 1)h)ii)avec une jointure **/
+   select NOM_NOT, ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE = (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+                                                           
+ /* 1)h)iii) avec un exists */                                                         
+ select N.NOM_NOT, N.ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and M.NOM_MEM = 'Paul' and M.PRENOM_MEM = 'Thomas' and exists (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+                                                           
+  
+    
+ /************* Question 1)i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
  
  insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -396,25 +459,14 @@ create sequence NO_RAPPORT_SEQ
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
-	
-	
-/******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
-
-
-select M.NO_NOTIFICATION, M.NOTE_NOT
-from TP2_NOTIFICATION M, TP2_MEMBRE N
-where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
-
-	
-	
                                                   /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
-    /******************** Question j)i) Utilisant un not in. **************************/
+    /******************** Question 1) j)i) Utilisant un not in. **************************/
     
     insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+        values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
     
     insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1002, 1);
-    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
+        insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1001, 0);
     
       select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -425,7 +477,7 @@ where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
                     group by NO_MEMBRE 
                     having count(NO_PROJET) > 1);
     
-     /******************** Question j)ii) Utilisant un minus (équivalent Oracle de except) *******************/
+     /******************** Question 1) j)ii) Utilisant un minus (équivalent Oracle de except) *******************/
      
     select distinct M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -439,7 +491,7 @@ where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
                                         group by NO_MEMBRE 
                                         having count(NO_PROJET) > 1 );   
          
-    /******************** Question j)iii) Utilisant un not exists *******************/
+    /******************** Question 1) j)iii) Utilisant un not exists *******************/
         
        select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -450,22 +502,60 @@ where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
                                                                                             having count(P.NO_PROJET) > 1); 
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
-   /******************** Question n)i) Une requête d’effacement de donnée: Supprimer un usager qui se desinscrit de la plateforme CIPRÉ *******************/
+   /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
    
-   /*à refaire*/
-  /* delete from TP2_MEMBRE where NO_MEMBRE = 25; */
+    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+        values ('CONF_TEST', 'TITRE_SUPPRIMER', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'ABIDJAN', '22 RUE DE LA VERENDRILLE');
    
-   /******************** Question n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
+    delete from TP2_CONFERENCE where SIGLE_CONFERENCE = 'CONF_TEST'; 
+   
+   /******************** Question 1) n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+    
+    
+     /*************************** 2)a)    ****************************************/
+  
+      create or replace trigger TRG_BIU_DIRECTEUR_PROJET
+            before insert or update of EST_DIRECTEUR_PRO on TP2_EQUIPE_PROJET
+            for each row 
+       declare
+            V_NB_DIRECTEUR_PROJET number(1);
+      begin 
+            select count(*) into V_NB_DIRECTEUR_PROJET
+                from TP2_EQUIPE_PROJET
+            where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
+            
+            if V_NB_DIRECTEUR_PROJET > 0 and :NEW.EST_DIRECTEUR_PRO = 1 then
+                raise_application_error(-20052, 'Ce projet à déjà un directeur');
+                end if;
+    end TRG_BIU_DIRECTEUR_PROJET;
+    /
+    
+    
+    insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_4', 1000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
+        
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1003, 0);
+    
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1003, 1);
+    
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1003, 1);
+    
+    /*
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+    
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+    */
+
    	
    	/******************* Question 2) b) Fonction FCT_MOYENNE_MNT_ALLOUE qui reçoit en paramètre un numéro de membre et retourne le montant moyen alloué pour tous ses projets **************/
    	
     create or replace function FCT_MOYENNE_MNT_ALLOUE(V_NO_MEMBRE in number) return number
     is 
-        V_MNT_MOYEN number (9,2);
+        V_MNT_MOYEN TP2_PROJET.MNT_ALLOUE_PRO%type;
     begin
         select avg(P.MNT_ALLOUE_PRO) into V_MNT_MOYEN
             from TP2_PROJET P, TP2_EQUIPE_PROJET E
@@ -510,78 +600,102 @@ where M.NO_MEM_ATTRIBUTION = N.NO_MEMBRE and PAYS_MEM = 'Cameroun';
 );
 
     /********* Création de la Procédure stockée SP_ARCHIVER_PROJET *************/
-    create or replace procedure SP_ARCHIVER_PROJET (V_DATE_PROJET date) is 
-        /*V_DATE_2_ANS date;*/
-        E_DATE_INVALIDE exception;
+    create or replace procedure SP_ARCHIVER_PROJET (V_DATE_FIN_PROJET date) is 
+        V_DATE_2_ANS date;
+        
     begin 
-        /*select (TRUNC(SYSDATE) - INTERVAL '2' YEAR) into V_DATE_2_ANS from DUAL ;*/
-        
-        if V_DATE_PROJET > (TRUNC(SYSDATE) - INTERVAL '2' YEAR)  then
-            raise E_DATE_INVALIDE;
-        end if;
-        
+        select (TRUNC(SYSDATE) - INTERVAL '2' YEAR) into V_DATE_2_ANS from DUAL ;   
+
         declare 
+            E_DATE_INVALIDE exception;
+
             cursor ANCIEN_PROJET_CURSEUR is
                 select NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO 
                     from TP2_PROJET
-                    where DATE_FIN_PRO < V_DATE_PROJET  and STATUT_PRO = 'Terminé'
+                    where DATE_FIN_PRO < V_DATE_FIN_PROJET  and STATUT_PRO = 'Terminé'
                     order by NO_PROJET asc;
                     
         begin
+        
+         if V_DATE_FIN_PROJET > V_DATE_2_ANS then
+            raise E_DATE_INVALIDE;
+            end if;
+        
             for ENR_PROJET in ANCIEN_PROJET_CURSEUR
             loop 
                 insert into TP2_PROJET_ARCHIVE( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO) 
                     values ( ENR_PROJET.NO_PROJET, ENR_PROJET.NOM_PRO, ENR_PROJET.MNT_ALLOUE_PRO, ENR_PROJET.STATUT_PRO, ENR_PROJET.DATE_DEBUT_PRO, ENR_PROJET.DATE_FIN_PRO);
                     
-                delete from TP2_PROJET where NO_PROJET = ENR_PROJET.NO_PROJET;
-             
                  insert into TP2_RAPPORT_ARCHIVE (NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
                     select NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP
                         from TP2_RAPPORT
                         where NO_PROJET = ENR_PROJET.NO_PROJET;
                 
+                
                 delete from TP2_RAPPORT where NO_PROJET = ENR_PROJET.NO_PROJET;
+                
+                delete from TP2_PROJET where NO_PROJET = ENR_PROJET.NO_PROJET;
+                
+                
             end loop;
                        
-    exception
-        When E_DATE_INVALIDE then
-            dbms_output.put_line('La date fournie dois être veille que 2 ans');
-    end;
-    
-    end SP_ARCHIVER_PROJET;
+        exception
+            When E_DATE_INVALIDE then
+                dbms_output.put_line('La date fournie dois être veille que 2 ans');
+        end;
+        
+end SP_ARCHIVER_PROJET;
   /
 
-  execute SP_ARCHIVER_PROJET(to_date('12-10-01','RR-MM-DD'));
-  
-  
-  /*************************** 2)a)    ****************************************/
-  
-  create or replace trigger TRG_BIU_DIRECTEUR_PROJET
-        before insert or update of EST_DIRECTEUR_PRO on TP2_EQUIPE_PROJET
-        for each row 
-   declare
-        V_NB_DIRECTEUR_PROJET number(1);
-  begin 
-        select count(*) into V_NB_DIRECTEUR_PROJET
-            from TP2_EQUIPE_PROJET
-        where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
+ insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_5', 10000, 'Terminé', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));       
         
-        if V_NB_DIRECTEUR_PROJET > 0 and :NEW.EST_DIRECTEUR_PRO = 1 then
-            raise_application_error(-20052, 'Ce projet à déjà un directeur');
-            end if;
-end TRG_BIU_DIRECTEUR_PROJET;
-/
+    insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+        values (NO_PROJET_SEQ.nextval, 'Projet_6', 11000, 'Terminé', to_date('11-01-01','RR-MM-DD'), to_date('11-06-15','RR-MM-DD'));
+        
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+        values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_5', '/fichier_RAP_5.docx', to_date('15-06-02','RR-MM-DD'), 'DEBU');
+  
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+        values ( NO_RAPPORT_SEQ.nextval, 1005, 'RAPPORT_6', '/fichier_RAP_6.docx', to_date('11-03-10','RR-MM-DD'), 'DEBU');
+        
 
+  execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
+  
+  
+  /**************** 2)e) requêtes PL/SQL stored procedure pour la réinitialisation d' un mot de passe temporaire à un utilisateur *****************/
+  
+  create or replace procedure SP_RÉINITIALISER_MOT_DE_PASSE (V_NO_MEMBRE number, V_NB_CARACTERE number) is
+  
+    begin        
+        update TP2_MEMBRE
+            set MOT_DE_PASSE_MEM = FCT_GENERER_MOT_DE_PASSE(V_NB_CARACTERE)
+            where NO_MEMBRE = V_NO_MEMBRE;
+        
+  end SP_RÉINITIALISER_MOT_DE_PASSE;
+  /
+   
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
+   
+   
+   
+   
+   
+    /***question 1.m**/
 
-insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
-    values (NO_PROJET_SEQ.nextval, 'Projet_4', 1000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
-    
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1003, 0);
-
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1003, 1);
-
-insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1003, 1);
-
-update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1003 and NO_MEMBRE = 15;
-
-update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1003 and NO_MEMBRE = 15;
+  select lpad(' ', LEVEL * 2, ' ')||PRENOM_MEM, NOM_MEM, TEL_MEM|| ' ' ||COURRIEL_MEM as ARBRE,
+         NO_MEMBRE, NO_MEMBRE_PATRON,
+         sys_connect_by_path(UTILISATEUR_MEM, '/') as CHEMIN,
+         level as NIVEAU
+      from TP2_MEMBRE
+      connect by prior NO_MEMBRE = NO_MEMBRE_PATRON 
+      start with NO_MEMBRE_PATRON is null;
+      
+  col ARBRE format a40
+  col CHEMIN format a40
+  
+  
+  
+  
+  
