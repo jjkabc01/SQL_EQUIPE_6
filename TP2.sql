@@ -382,6 +382,20 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_CONFERENCE;
   
   
+  /******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
+
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+  NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'Fabrice.Camara', FCT_GENERER_MOT_DE_PASSE(7), 'Camara', 'Fabrice', '4 Derek Park 4 Bamenda Yaounde', 'g1v 1j8', 'Cameroun', '(514)699-3569','(514)699-4569','Anglais','/membre4.png','Cfabrice.com','NASA','fabrice.camara@cipre.com', 5 ,1,0,1);
+   
+   insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_3_CAM', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_3_CAM', 5, 25);
+
+select N.NO_NOTIFICATION, N.NOTE_NOT
+from TP2_NOTIFICATION N, TP2_MEMBRE M
+where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
+  
+  
 
  /************ Question 1)g)requête SQL qui affiche le titre des rapports débutés en ordre décroissant de date de dépôt pour le projet « Économie au Sud soudan » **/ 
  
@@ -500,6 +514,63 @@ create sequence NO_RAPPORT_SEQ
                                                                                             where M.NO_MEMBRE = P.NO_MEMBRE and P.EST_DIRECTEUR_PRO = 1
                                                                                             group by P.NO_MEMBRE 
                                                                                             having count(P.NO_PROJET) > 1); 
+                                                                                            
+                                                                                            
+    /*****Question 1k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans
+les 18 derniers mois (par rapport à sysdate)******/
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord parfait', 200030.23, 'Débuté', to_date('20-06-01','RR-MM-DD'), to_date('25-09-01','RR-MM-DD'));
+
+insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
+    values (NO_PROJET_SEQ.nextval, 'Accord imparfait', 200030.23, 'Débuté', to_date('21-06-01','RR-MM-DD'), to_date('24-09-01','RR-MM-DD'));
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1003, 'RAPPORT_Accord_parfait', '/fichierAcord.docx', to_date('22-10-01','RR-MM-DD'), 'DEBU');
+    
+    
+insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
+    
+
+select M.NOM_PRO, N.DATE_DEPOT_RAP 
+	from TP2_PROJET M, TP2_RAPPORT N
+	where M.NO_PROJET = N.NO_PROJET and N.DATE_DEPOT_RAP < (sysdate - interval '18' MONTH)
+
+    order by M.NOM_PRO asc;                
+    
+    
+    
+    /***** Question 1) L) Pour afficher les courriels des administrateurs dont le courriel termine par .ca qui sont aussi des courriels de
+de superviseurs sans téléphone. Une seule colonne sera affichée. ***/
+
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+    NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'jackson.Mike', FCT_GENERER_MOT_DE_PASSE(7), 'Mike', 'Jackson', '9 Derek Park 4 Sauthoff Court', 'g3e 1j8', 'CANADA', '(418)699-3569','(418)699-4569','Anglais','/membreJack.png','MJackson.com','NASA','mike.jackson@ulaval.ca', 5 ,1,0,1);
+
+/****i) Donnez la requête utilisant un intersect. **/
+
+(select COURRIEL_MEM from TP2_MEMBRE
+where EST_ADMINISTRATEUR_MEM = 1)
+intersect
+(select COURRIEL_MEM from TP2_MEMBRE
+where COURRIEL_MEM like '%.ca');
+
+/**ii) Donnez la requête utilisant un exists. **/
+
+select COURRIEL_MEM from TP2_MEMBRE M
+where exists (select COURRIEL_MEM from TP2_MEMBRE N 
+                where EST_ADMINISTRATEUR_MEM = 1 and M.COURRIEL_MEM = N.COURRIEL_MEM and COURRIEL_MEM like '%.ca');
+
+/**iii) Donnez la requête utilisant un in **/
+select COURRIEL_MEM 
+    from TP2_MEMBRE
+    where EST_ADMINISTRATEUR_MEM = 1 
+    and COURRIEL_MEM in (select COURRIEL_MEM
+                            from TP2_MEMBRE
+                            where COURRIEL_MEM like '%.ca');      
+                            
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
@@ -514,6 +585,18 @@ create sequence NO_RAPPORT_SEQ
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
+    
+    
+      /********* n)iii à revoir *****/
+  insert into TP2_NOTIFICATION (  NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION)
+    select N.NO_NOTIFICATION || '1', M.NOM_MEM, N.DATE_ECHEANCE_NOT, N.ETAT_NOT, N.NOTE_NOT, N.NO_MEM_ADMIN_CREATION, N.NO_MEM_ATTRIBUTION  
+        from TP2_NOTIFICATION N, TP2_MEMBRE M
+        where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.NO_MEMBRE = 25;
+        
+    
+    /** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
+	 alter table TP2_CONFERENCE
+    add ORGANISATEUR_CONF varchar2(40) null;
     
     
      /*************************** 2)a)    ****************************************/
@@ -681,7 +764,6 @@ end SP_ARCHIVER_PROJET;
    
    
    
-   
     /***question 1.m**/
 
   select lpad(' ', LEVEL * 2, ' ')||PRENOM_MEM, NOM_MEM, TEL_MEM|| ' ' ||COURRIEL_MEM as ARBRE,
@@ -694,8 +776,3 @@ end SP_ARCHIVER_PROJET;
       
   col ARBRE format a40
   col CHEMIN format a40
-  
-  
-  
-  
-  
