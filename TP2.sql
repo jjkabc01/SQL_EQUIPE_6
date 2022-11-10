@@ -1,4 +1,4 @@
- /**** TP2 *******/ 
+/**** TP2 *******/ 
 
 SET SERVEROUTPUT ON
 
@@ -389,10 +389,10 @@ create sequence NO_RAPPORT_SEQ
     values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
     
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1006, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
     
      insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1006, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
     
  
   select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
@@ -677,6 +677,4 @@ end SP_ARCHIVER_PROJET;
    
    execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
    execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
-   
-   
    
