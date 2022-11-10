@@ -16,3 +16,11 @@
   where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE in (select NO_MEMBRE
                                                            from TP2_MEMBRE
                                                            where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
+
+
+  /** 1)h)ii)avec une jointure **/
+   select NOM_NOT, ETAT_NOT
+  from TP2_NOTIFICATION N, TP2_MEMBRE M
+  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE = (select NO_MEMBRE
+                                                           from TP2_MEMBRE
+                                                           where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
