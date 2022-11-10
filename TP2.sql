@@ -538,8 +538,39 @@ select M.NOM_PRO, N.DATE_DEPOT_RAP
 	from TP2_PROJET M, TP2_RAPPORT N
 	where M.NO_PROJET = N.NO_PROJET and N.DATE_DEPOT_RAP < (sysdate - interval '18' MONTH)
 
-    order by M.NOM_PRO asc;                                                                                        
-                                                                                                                                                                                                                                                                                                                                                         
+    order by M.NOM_PRO asc;                
+    
+    
+    
+    /***** Question 1) L) Pour afficher les courriels des administrateurs dont le courriel termine par .ca qui sont aussi des courriels de
+de superviseurs sans téléphone. Une seule colonne sera affichée. ***/
+
+insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
+    NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
+    values ( NO_MEMBRE_SEQ.nextval, 'jackson.Mike', FCT_GENERER_MOT_DE_PASSE(7), 'Mike', 'Jackson', '9 Derek Park 4 Sauthoff Court', 'g3e 1j8', 'CANADA', '(418)699-3569','(418)699-4569','Anglais','/membreJack.png','MJackson.com','NASA','mike.jackson@ulaval.ca', 5 ,1,0,1);
+
+/****i) Donnez la requête utilisant un intersect. **/
+
+(select COURRIEL_MEM from TP2_MEMBRE
+where EST_ADMINISTRATEUR_MEM = 1)
+intersect
+(select COURRIEL_MEM from TP2_MEMBRE
+where COURRIEL_MEM like '%.ca');
+
+/**ii) Donnez la requête utilisant un exists. **/
+
+select COURRIEL_MEM from TP2_MEMBRE M
+where exists (select COURRIEL_MEM from TP2_MEMBRE N 
+                where EST_ADMINISTRATEUR_MEM = 1 and M.COURRIEL_MEM = N.COURRIEL_MEM and COURRIEL_MEM like '%.ca');
+
+/**iii) Donnez la requête utilisant un in **/
+select COURRIEL_MEM 
+    from TP2_MEMBRE
+    where EST_ADMINISTRATEUR_MEM = 1 
+    and COURRIEL_MEM in (select COURRIEL_MEM
+                            from TP2_MEMBRE
+                            where COURRIEL_MEM like '%.ca');      
+                            
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
    /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
