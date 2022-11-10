@@ -587,6 +587,11 @@ select COURRIEL_MEM
    	where NO_MEMBRE = 10;
     
     
+    /** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
+	 alter table TP2_CONFERENCE
+    add ORGANISATEUR_CONF varchar2(40) null;
+    
+    
      /*************************** 2)a)    ****************************************/
   
       create or replace trigger TRG_BIU_DIRECTEUR_PROJET
