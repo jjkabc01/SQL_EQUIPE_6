@@ -763,6 +763,75 @@ end SP_ARCHIVER_PROJET;
    
    
    
+   /****** Question 3)a)ii)1) Justification des index nécessaires 
+
+les combinaison des champs NOM_MEM et PRENOM_MEM permet de créer deux index différents notamment 
+IDX_MEMBRE_NOM_PRENOM_MEM et IDX_MEMBRE_PRENON_NOM_MEM. En effet la permutation des champs permet de crééer deux index differents 
+dont les plan d'execution sont differents selon la nature des requêtes.
+
+Aussi la combinaison des champs INSTITUTION_MEM et NOM_MEM nous permet également de pouvoir créer deux autres index differents
+ceci en permuttant les champs dans la création des deux index.
+
+Enfin, INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
+nous avons nommé IDX_MEMBRE_INSTITUTION_MEM. *******/
+   
+   
+/****** Question 3)a)ii)2) Justification des index non nécessaires  
+
+les champs NOM_MEM, PRENOM_MEM étant déja des clés étrangères ils sont dejà indexés donc nous n'avons plus à créer des index sur ses champs 
+   
+*******/  
+
+/****** Question 3)a)iii)1)Trois autres situations avec explication où l'index est nécessaire pour CRIPÉ
+
+SITUATION 1 : Recherche d'une conférence 
+EXPLICATION : lorsqu'un membre cherche dans le système une conférence, il se sert du titre de la conference et du lieu de la conférence
+
+
+SITUATION 2 : Rechercher un rapport 
+EXPLICATION : lorsqu'un membre cherche dans le système un rapport, il se sert du nom du fichier rapport et de la date de dépot du rapport
+
+SITUATION 3 : Recherche d'un projet
+EXPLICATION : Lorsqu'un membre cherche un projet, il se sert du nom du projet et du montant alloué au dit projet
+
+*******/
+
+/****** Question 3)a)iii)2)Les requètes d'index pour chacune des trois situations *******/ 
+/******SITUATION 1 : Recherche d'une conférence *******/
+
+create index IDX_CONFERENCE_TITRE_LIEU_CON
+on TP2_CONFERENCE(TITRE_CON, LIEU_CON);
+
+create index IDX_CONFERENCE_LIEU_TITRE_CON
+on TP2_CONFERENCE(LIEU_CON, TITRE_CON);
+
+create index IDX_CONFERENCE_LIEU_CON
+on TP2_CONFERENCE(LIEU_CON);
+
+/******SITUATION 2 : Recherche d'un rapport *******/
+
+create index IDX_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP
+    on TP2_RAPPORT (NOM_FICHIER_RAP, DATE_DEPOT_RAP);
+    
+create index IDX_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP
+on TP2_RAPPORT (DATE_DEPOT_RAP, NOM_FICHIER_RAP);
+
+create index IDX_DATE_DEPOT_RAP
+on TP2_RAPPORT (DATE_DEPOT_RAP);
+
+/******SITUATION 3 : Recherche d'un projet *******/
+create index IDX_NOM_MONTANT_PRO
+on TP2_PROJET (NOM_PRO, MNT_ALLOUE_PRO);
+
+create index IDX_MONTANT_NOM_PRO
+on TP2_PROJET (MNT_ALLOUE_PRO, NOM_PRO);
+
+create index IDX_MONTANT_PRO
+on TP2_PROJET(MNT_ALLOUE_PRO);
+
+   
+   
+   
    
     /***question 1.m**/
 
