@@ -597,10 +597,9 @@ create or replace view VUE_HIERACHIE_MEMBRE as
      
      /******** 1)m) iii) Ajout d' un enregistrement dans la table MEMBRE par la vue Oracle *******/
      
-     /*a faire*/
-
-
-
+     /* L'insertion n'est pas possible à partir de la vue avec la version Oracle de l'abre
+      /* Parce que la version oracle de l'arble ne permet la création de la vue.
+      
 
                             
      
@@ -649,8 +648,7 @@ create or replace view VUE_HIERACHIE_MEMBRE as
             if :OLD.EST_DIRECTEUR_PRO is null  then 
                 select count(*) into V_NB_DIRECTEUR_PROJET
                     from TP2_EQUIPE_PROJET
-                where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
-                
+                where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;                
             else 
                 dbms_output.put_line('OIF3- ' || :OLD.EST_DIRECTEUR_PRO || ' - ' || :NEW.EST_DIRECTEUR_PRO );
                 select count(*) into V_NB_DIRECTEUR_PROJET
@@ -810,7 +808,45 @@ end SP_ARCHIVER_PROJET;
    
    
    
-   
-   
-   
-  
+   /************************ 3) a)Indexation * ******************************************/
+   /************************3) a) i)requêtes SQL dont vous auriez besoin pour créer les Index nécessaires pour améliorer les performances de ces recherches des membre  ******************************************/
+        create index IDX_INSTITUTION_MEM
+            on TP2_MEMBRE (INSTITUTION_MEM);  
+            
+        create index IDX_INSTITUTION_NOM_MEM
+            on TP2_MEMBRE (INSTITUTION_MEM, NOM_MEM); 
+            
+        create index IDX_NOM_INSTITUTION_MEM
+            on TP2_MEMBRE (NOM_MEM, INSTITUTION_MEM); 
+        
+        create index IDX_NOM_PRENOM_MEM
+            on TP2_MEMBRE (NOM_MEM, PRENOM_MEM); 
+            
+        create index IDX_PRENOM_NOM_MEM
+            on TP2_MEMBRE (PRENOM_MEM, NOM_MEM);
+            
+   /************************************ 3) a) ii) 1) Justifions nos choix Pour les index choisis  ***********************************/       
+    
+     /* 
+        Les combinaison des champs NOM_MEM et PRENOM_MEM permet de créer deux index différents notamment 
+        IDX_MEMBRE_NOM_PRENOM_MEM et IDX_MEMBRE_PRENON_NOM_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
+        
+        Les combinaison des champs NOM_MEM et INSTITUTION_MEM permet de créer deux index différents notamment 
+        IDX_INSTITUTION_NOM_MEM etIDX_NOM_INSTITUTION_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
+        
+        Enfin, les resultat étant groupé par INSTITUTION_MEM et INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
+        nous avons nommé IDX_MEMBRE_INSTITUTION_MEM qui permet de recupérer les information des membres par rapport à leur institution rapidement.
+    */
+    
+    
+   /************************************ 3) a) ii) 2) Justifions nos  choix pour les index non choisis   ***********************************/  
+    
+   /*
+       Un Index sur le champ NOM_PRO de la table TP2_PROJET n'aurait pas été utilement exploitable pour trouver les informations des membres
+       -- À Vérifier: Les champs NOM_MEM, PRENOM_MEM étant déja des clés étrangères ils sont dejà indexés donc nous n'avons plus à créer des index sur ses champs 
+   */
+    
+    /********************************** 3) b) ii) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
+    
+    
+    
