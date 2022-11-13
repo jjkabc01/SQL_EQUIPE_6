@@ -759,7 +759,28 @@ end SP_ARCHIVER_PROJET;
   /
    
    execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
-   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19); 
+   
+   
+    /**************** 2)e) requêtes PL/SQL une fonction pour afficher la date d'une conference programmée *****************/
+    
+   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    values ('COOP', 'Sommet des coop', to_date('22-12-02','RR-MM-DD'), to_date('22-12-10','RR-MM-DD'), 'QUEBEC', '2325 RUE DELGADO QUEBEC CANADA');
+    
+    
+   create or replace function FCT_DATE_CONFERENCE (P_I_SIGLE_CONFERENCE in varchar2) return date
+    is
+        V_DATE_DEBUT_CON date;
+    begin
+        select DATE_DEBUT_CON into V_DATE_DEBUT_CON from TP2_CONFERENCE
+            where SIGLE_CONFERENCE = P_I_SIGLE_CONFERENCE;
+
+        return V_DATE_DEBUT_CON;
+        
+    end FCT_DATE_CONFERENCE;
+    /
+    
+    select FCT_DATE_CONFERENCE('COOP') from DUAL;
    
    
    
