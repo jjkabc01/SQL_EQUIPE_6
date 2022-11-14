@@ -981,17 +981,143 @@ end SP_ARCHIVER_PROJET;
         create index IDX_TP2_PROJET_MONTANT_NOM_PRO
         on TP2_PROJET (MNT_ALLOUE_PRO, NOM_PRO);
 
+
+
+
+    /*****Indexation et amélioration des performances***/
     
-    /********************************** 3) b) ii)( stratégie 7.2.2 - voir question 1.g) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
-    alter table TP2_RAPPORT
-        add NOM_ETAT_RAP  varchar2(30) not null;
+    /*****question 3) b) i) 2 techniques différentes pour dénormaliser le modèle****/
+    /*** Technique 1: 7.1 Combinaison des associations 1:1
+    
+        Nous constatons qu'il y a une relation de type 1:1 entre les tables TP2_EQUIPE_PROJET et TP2_PROJET
+        on peut donc denormaliser en combinant ces deux tables afin d'obtenir une seule table qu'on pourrait nommer
+        TP2_PROJET cela va  donc améliorer la performance (en ce qui concerne les recherches et les redondances), 
+        parce toutes les données seront centralisées dans une seule table.
         
+    *****/
+    
+    /*** Technique 2 : 7.2.2 Dupliquer les attributs non clés dans une association 1:* 
+        Nous constatons qu'il y a une relation de type 1:* entre les tables TP2_RAPPORT et TP2_RAPPORT_ETAT 
+        on peut donc denormaliser en dupliquant les attributs de la TP2_RAPPORT_ETAT dans la table TP2_RAPPORT afin d'obtenir une table TP2_RAPPORT plus complète.
+        Cela va donc améliorer la performance (en ce qui concerne la reduction des jointures).
+        De sorte que si nous souhaitons accéder à une information dans la table TP2_RAPPORT_ETAT, nous puissions y accéder dans la table TP2_RAPPORT (sans faire de jointure).
+    ****/
+    
+    /********************************** 3) b) ii)requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
+     
+     /*** Technique 1: 7.1 **/
+    alter table TP2_PROJET
+        add NO_MEMBRE number(10) null;
+        
+    alter table TP2_PROJET
+        add EST_DIRECTEUR_PRO number(1) default 0 null;
+    
+    alter table TP2_PROJET
+        add constraint FK_TP2_PROJET_NO_MEMBRE foreign key (NO_MEMBRE) 
+				references TP2_MEMBRE (NO_MEMBRE); 
+     
+    /*** Technique 2 : 7.2.2 **/
+    alter table TP2_RAPPORT
+        add NOM_ETAT_RAP varchar2(30) null;
+        
+  /********************************** 3) b) iii) Requêtes de déclencheur PL/SQL nécessaires pour compenser la dénormalisation et conserver l'intégrité des données. ***************/
+  create or replace trigger TRG_BIU_TP2_RAPPORT   
+    before insert or update on TP2_RAPPORT   
+    for each row
+    declare 
+        V_ETAT_RAP varchar2(30);
+    begin 
+        select NOM_ETAT_RAP into V_ETAT_RAP
+        from TP2_RAPPORT_ETAT
+        where CODE_ETAT_RAP = :NEW.CODE_ETAT_RAP;
+        
+        :NEW.NOM_ETAT_RAP := V_ETAT_RAP;
+        
+    end TRG_BIU_TP2_RAPPORT ;
+    /
+    
+    
+    create or replace procedure SP_ACTIVER_TRIGGER(P_I_NOM_TRIGGER in varchar2)
+    is
+    pragma AUTONOMOUS_TRANSACTION;
+    begin
+        execute immediate 'alter trigger ' || P_I_NOM_TRIGGER || ' enable';
+    end;
+    /
+    
+    create or replace procedure SP_DESACTIVER_TRIGGER(P_I_NOM_TRIGGER in varchar2)
+    is
+    pragma AUTONOMOUS_TRANSACTION;
+    begin
+        execute immediate 'alter trigger ' || P_I_NOM_TRIGGER || ' disable';
+    end;
+    /
+    
+    
+    create or replace trigger TRG_BU_TP2_RAPPORT_ETAT  
+    before update on TP2_RAPPORT_ETAT 
+    for each row
+    declare 
+    begin
+        SP_DESACTIVER_TRIGGER('TRG_BIU_TP2_RAPPORT');
+        
+        update TP2_RAPPORT
+            set NOM_ETAT_RAP = :NEW.NOM_ETAT_RAP
+            where CODE_ETAT_RAP = :NEW.CODE_ETAT_RAP;
+            
+        SP_ACTIVER_TRIGGER('TRG_BIU_TP2_RAPPORT');
+        
+    end TRG_BU_TP2_RAPPORT_ETAT;
+    /
+   
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP, NOM_ETAT_RAP)
+        values ( NO_RAPPORT_SEQ.nextval, 1001, 'RAPPORT_2', '/fichierTRIGGER.docx', to_date('15-10-01','RR-MM-DD'), 'DEBU', 'Approuvé');
+            
+        
+       
+  /********************************** 3) b) iv) requêtes SQL pour déplacer/copier les données de vos tables dénormalisées ***************/  
+       
+    /*** Technique 1: 7.1 **/                                          
+  /*  update TP2_PROJET P set P.NO_MEMBRE = (select E.NO_MEMBRE 
+                                                from TP2_EQUIPE_PROJET E
+                                                where E.NO_PROJET = E.NO_PROJET );
+                                                
+    update TP2_PROJET P set P.EST_DIRECTEUR_PRO = (select E.EST_DIRECTEUR_PRO 
+                                                from TP2_EQUIPE_PROJET E
+                                                where P.NO_PROJET = E.NO_PROJET);      */   
+                                                
+    create or replace procedure SP_COPIER_DONNEE is 
+        
+    begin  
+
+        declare 
+            cursor DONNEE_TABLE_EQUIPE_PROJET_CURSEUR is
+                select * 
+                    from  TP2_EQUIPE_PROJET;                   
+        begin
+
+            for ENR_PROJET in DONNEE_TABLE_EQUIPE_PROJET_CURSEUR
+            loop 
+                insert into TP2_PROJET( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO, NO_MEMBRE, EST_DIRECTEUR_PRO) 
+                    select NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO, ENR_PROJET.NO_MEMBRE, ENR_PROJET.EST_DIRECTEUR_PRO
+                        from TP2_PROJET
+                        where NO_PROJET = ENR_PROJET.NO_PROJET;                                    
+            end loop;
+        
+    end;
+end SP_COPIER_DONNEE;
+/
+  
+  execute SP_COPIER_DONNEE;
+  
+                                                
+    drop table TP2_EQUIPE_PROJET cascade constraints;
+      
+    /*** Technique 2 : 7.2.2 **/                                                                   
     update TP2_RAPPORT R
         set R.NOM_ETAT_RAP = (select E.NOM_ETAT_RAP
                                     from TP2_RAPPORT_ETAT E
                                     where R.CODE_ETAT_RAP = E.CODE_ETAT_RAP);
-                                    
-                                    
     
     
     
@@ -999,14 +1125,3 @@ end SP_ARCHIVER_PROJET;
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-     
