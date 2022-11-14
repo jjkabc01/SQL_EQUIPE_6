@@ -62,6 +62,7 @@ create table TP2_PROJET (
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
   constraint PK_TP2_PROJET primary key (NO_PROJET),
+  constraint AK_TP2_PROJET_NOM_PRO unique (NOM_PRO),
   constraint CT_STATUT_PRO check (STATUT_PRO in ('Débuté', ' En vérification', 'En correction', 'Terminé')),
   constraint CT_MNT_ALLOUE_PRO_SUPERIEUR_EGAL_0 check(MNT_ALLOUE_PRO >= 0),
   constraint CT_DATE_FIN_PRO_SUPERIEUR_DATE_DEBUT_PRO check (DATE_FIN_PRO > DATE_DEBUT_PRO)
@@ -116,6 +117,7 @@ create table TP2_RAPPORT (
   DATE_DEPOT_RAP date not null,
   CODE_ETAT_RAP char(4) not null,
   constraint PK_TP2_RAPPORT primary key (NO_RAPPORT),
+  constraint AK_TP2_RAPPORT_NOM_FICHIER_RAP unique (NOM_FICHIER_RAP),
   constraint FK_TP2_RAPPORT_NO_PROJET foreign key (NO_PROJET) 
 				references TP2_PROJET (NO_PROJET),
   constraint FK_TP2_RAPPORT_CODE_ETAT_RAP foreign key (CODE_ETAT_RAP) 
@@ -132,6 +134,7 @@ create table TP2_CONFERENCE (
   LIEU_CON varchar2(40) not null,
   ADRESSE_CON varchar2(40) not null,
   constraint PK_TP2_CONFERENCE primary key (SIGLE_CONFERENCE),
+  constraint AK_TP2_CONFERENCE_TITRE_CON unique (TITRE_CON),
   constraint CT_LONGUEUR_ADRESSE_CON check ( length(ADRESSE_CON) > 20 and length (ADRESSE_CON) < 40)
 
 );
@@ -344,7 +347,7 @@ create sequence NO_RAPPORT_SEQ
     
   
   insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    select 'CRIP2023', TITRE_CON, DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
+    select 'CRIP2023', 'CONFERENCE 2023', DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
         from TP2_CONFERENCE
         where SIGLE_CONFERENCE =  'CRIP2022';
         
@@ -401,10 +404,10 @@ select N.NO_NOTIFICATION, N.NOTE_NOT
     values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
     
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1002_1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
     
      insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1002_2.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
     
  
   select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
@@ -421,7 +424,7 @@ select N.NO_NOTIFICATION, N.NOTE_NOT
   
   
     insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 25, 10);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 30, 10);
   
   
   /* QUestion 1)h)i) avec un in */
@@ -530,7 +533,7 @@ insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DAT
     
     
 insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
+    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord2.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
     
 
 select M.NOM_PRO, N.DATE_DEPOT_RAP 
@@ -621,7 +624,7 @@ create or replace view VUE_HIERACHIE_MEMBRE as
     /*********Question 1)n)iii) creation d'un nouveau rapport mis à l'état vérifié en se basant sur les informations d'un ancien rapport *****/
  
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-        select NO_RAPPORT_SEQ.nextval, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP,DATE_DEPOT_RAP,'VERI'
+        select NO_RAPPORT_SEQ.nextval, NO_PROJET, TITRE_RAP, '/'|| TITRE_RAP || '.docx',DATE_DEPOT_RAP,'VERI'
         from TP2_RAPPORT
         where NO_RAPPORT = 1003;     
             
@@ -841,7 +844,7 @@ end SP_ARCHIVER_PROJET;
                 where SIGLE_CONFERENCE = :NEW.SIGLE_CONFERENCE;    
                            
             if V_EXISTE_CONFERENCE < 1 then
-                raise_application_error(-20052,  'La conférence n'' existe pas ');
+                raise_application_error(-20053,  'La conférence n'' existe pas ');
             end if;
     end TRG_BIU_DIRECTEUR_PROJET;
     /
@@ -853,13 +856,13 @@ end SP_ARCHIVER_PROJET;
    
    /************************ 3) a)Indexation * ******************************************/
    /************************3) a) i)requêtes SQL dont vous auriez besoin pour créer les Index nécessaires pour améliorer les performances de ces recherches des membre  ******************************************/
-      
-      drop index IDX_INSTITUTION_MEM;
-      drop index IDX_INSTITUTION_NOM_MEM;
-      drop index IDX_NOM_INSTITUTION_MEM;
-      drop index IDX_NOM_PRENOM_MEM;
-      drop index IDX_PRENOM_NOM_MEM;
-      
+     /* 
+      drop index IDX_TP2_MEMBRE_INSTITUTION_MEM;
+      drop index IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM;
+      drop index IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM;
+      drop index IDX_TP2_MEMBRE_NOM_PRENOM_MEM;
+      drop index IDX_TP2_MEMBRE_PRENOM_NOM_MEM;
+      */
        explain plan for
             select * from TP2_MEMBRE where NOM_MEM = 'Doe' and PRENOM_MEM = 'John' order by INSTITUTION_MEM;
              select * from table(dbms_xplan.display);
@@ -874,19 +877,19 @@ end SP_ARCHIVER_PROJET;
             select * from table(dbms_xplan.display);
             
       
-        create index IDX_INSTITUTION_MEM
+        create index IDX_TP2_MEMBRE_INSTITUTION_MEM
             on TP2_MEMBRE (INSTITUTION_MEM);  
             
-        create index IDX_INSTITUTION_NOM_MEM
+        create index IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM
             on TP2_MEMBRE (INSTITUTION_MEM, NOM_MEM); 
             
-        create index IDX_NOM_INSTITUTION_MEM
+        create index IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM
             on TP2_MEMBRE (NOM_MEM, INSTITUTION_MEM); 
         
-        create index IDX_NOM_PRENOM_MEM
+        create index IDX_TP2_MEMBRE_NOM_PRENOM_MEM
             on TP2_MEMBRE (NOM_MEM, PRENOM_MEM); 
             
-        create index IDX_PRENOM_NOM_MEM
+        create index IDX_TP2_MEMBRE_PRENOM_NOM_MEM
             on TP2_MEMBRE (PRENOM_MEM, NOM_MEM);
             
             
@@ -908,22 +911,76 @@ end SP_ARCHIVER_PROJET;
     
      /* 
         Les combinaison des champs NOM_MEM et PRENOM_MEM permet de créer deux index différents notamment 
-        IDX_MEMBRE_NOM_PRENOM_MEM et IDX_MEMBRE_PRENON_NOM_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
+        IDX_TP2_MEMBRE_NOM_PRENOM_MEM et IDX_TP2_MEMBRE_PRENON_NOM_MEM qui permettent de retourner les informations d'un membre avec la condition du nom et du prénom plus rapidement.
+        Aussi on ne modifife pas souvent les noms des membres donc les mises à jour sont mois férquente sur les noms des membres un index sur ces champs ne posera pas de problème de performances.
         
         Les combinaison des champs NOM_MEM et INSTITUTION_MEM permet de créer deux index différents notamment 
-        IDX_INSTITUTION_NOM_MEM etIDX_NOM_INSTITUTION_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
+        IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM et IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
         
-        Enfin, les resultat étant groupé par INSTITUTION_MEM et INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
-        nous avons nommé IDX_MEMBRE_INSTITUTION_MEM qui permet de recupérer les information des membres par rapport à leur institution rapidement.
+        Enfin, les resultats étant groupé par INSTITUTION_MEM et INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
+        nous avons nommé IDX_TP2_MEMBRE_INSTITUTION_MEM qui permet de recupérer les information des membres par rapport à leur institution rapidement.
     */
     
     
    /************************************ 3) a) ii) 2) Justifions nos  choix pour les index non choisis   ***********************************/  
     
    /*
-       Un Index sur le champ NOM_PRO de la table TP2_PROJET n'aurait pas été utilement exploitable pour trouver les informations des membres
-       -- À Vérifier: Les champs NOM_MEM, PRENOM_MEM étant déja des clés étrangères ils sont dejà indexés donc nous n'avons plus à créer des index sur ses champs 
+       Un Index sur le champ NOM_PRO de la table TP2_PROJET n'aurait pas été utilement exploitable pour trouver les informations des membres.
+       Aussi, les attributs de la table TP2_PROJET ne sont assez nombreux pour justifier la création d'un index sur cette table.
    */
+   
+   
+        /****** Question 3)a)iii)1)Trois autres situations avec explication où l'index est nécessaire pour CRIPÉ
+        
+            SITUATION 1 : Recherche d'une conférence 
+            EXPLICATION : lorsqu'un membre cherche dans le système une conférence, il se sert du titre de la conference et du lieu de la conférence
+                   
+            SITUATION 2 : Rechercher un rapport 
+            EXPLICATION : lorsqu'un membre cherche dans le système un rapport, il se sert du nom du fichier rapport et de la date de dépot du rapport
+            
+            SITUATION 3 : Recherche d'un projet
+            EXPLICATION : Lorsqu'un membre cherche un projet, il se sert du nom du projet et du montant alloué au dit projet
+        
+        *******/
+        
+        /****** Question 3)a)iii)2)Les requètes d'index pour chacune des trois situations *******/ 
+        /******SITUATION 1 : Recherche d'une conférence *******/
+        
+        /*
+        drop index IDX_TP2_CONFERENCE_TITRE_LIEU_CON;
+        drop index IDX_TP2_CONFERENCE_LIEU_TITRE_CON;
+        drop index IDX_TP2_CONFERENCE_TITRE_CON;
+        drop index IDX_TP2_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP;
+        drop index IDX_TP2_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP;
+        drop index IDX_TP2_DATE_NOM_FICHIER_RAP;
+        drop index IDX_TP2_PROJET_NOM_MONTANT_PRO;
+        drop index IDX_TP2_PROJET_MONTANT_NOM_PRO;
+      */
+        
+        
+        create index IDX_TP2_CONFERENCE_TITRE_LIEU_CON
+        on TP2_CONFERENCE(TITRE_CON, LIEU_CON);
+        
+        create index IDX_TP2_CONFERENCE_LIEU_TITRE_CON
+        on TP2_CONFERENCE(LIEU_CON, TITRE_CON);
+        
+        
+        /******SITUATION 2 : Recherche d'un rapport *******/
+        
+        create index IDX_TP2_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP
+            on TP2_RAPPORT (NOM_FICHIER_RAP, DATE_DEPOT_RAP);
+            
+        create index IDX_TP2_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP
+        on TP2_RAPPORT (DATE_DEPOT_RAP, NOM_FICHIER_RAP);
+        
+        
+        /******SITUATION 3 : Recherche d'un projet *******/
+        create index IDX_TP2_PROJET_NOM_MONTANT_PRO
+        on TP2_PROJET (NOM_PRO, MNT_ALLOUE_PRO);
+        
+        create index IDX_TP2_PROJET_MONTANT_NOM_PRO
+        on TP2_PROJET (MNT_ALLOUE_PRO, NOM_PRO);
+
     
     /********************************** 3) b) ii)( stratégie 7.2.2 - voir question 1.g) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
     alter table TP2_RAPPORT
@@ -935,7 +992,21 @@ end SP_ARCHIVER_PROJET;
                                     where R.CODE_ETAT_RAP = E.CODE_ETAT_RAP);
                                     
                                     
-  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 
-   
+    
+     
