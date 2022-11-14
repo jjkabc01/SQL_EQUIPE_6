@@ -62,6 +62,7 @@ create table TP2_PROJET (
   DATE_DEBUT_PRO date not null,
   DATE_FIN_PRO date not null,
   constraint PK_TP2_PROJET primary key (NO_PROJET),
+  constraint AK_TP2_PROJET_NOM_PRO unique (NOM_PRO),
   constraint CT_STATUT_PRO check (STATUT_PRO in ('Débuté', ' En vérification', 'En correction', 'Terminé')),
   constraint CT_MNT_ALLOUE_PRO_SUPERIEUR_EGAL_0 check(MNT_ALLOUE_PRO >= 0),
   constraint CT_DATE_FIN_PRO_SUPERIEUR_DATE_DEBUT_PRO check (DATE_FIN_PRO > DATE_DEBUT_PRO)
@@ -116,6 +117,7 @@ create table TP2_RAPPORT (
   DATE_DEPOT_RAP date not null,
   CODE_ETAT_RAP char(4) not null,
   constraint PK_TP2_RAPPORT primary key (NO_RAPPORT),
+  constraint AK_TP2_RAPPORT_NOM_FICHIER_RAP unique (NOM_FICHIER_RAP),
   constraint FK_TP2_RAPPORT_NO_PROJET foreign key (NO_PROJET) 
 				references TP2_PROJET (NO_PROJET),
   constraint FK_TP2_RAPPORT_CODE_ETAT_RAP foreign key (CODE_ETAT_RAP) 
@@ -132,6 +134,7 @@ create table TP2_CONFERENCE (
   LIEU_CON varchar2(40) not null,
   ADRESSE_CON varchar2(40) not null,
   constraint PK_TP2_CONFERENCE primary key (SIGLE_CONFERENCE),
+  constraint AK_TP2_CONFERENCE_TITRE_CON unique (TITRE_CON),
   constraint CT_LONGUEUR_ADRESSE_CON check ( length(ADRESSE_CON) > 20 and length (ADRESSE_CON) < 40)
 
 );
@@ -251,7 +254,7 @@ create sequence NO_RAPPORT_SEQ
   select FCT_GENERER_MOT_DE_PASSE(7) from DUAL;
   
   
-  /******* Question 1b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
+  /******* Question 1) b) 2 requêtes d’insertion SQL valides pour chaque table du modèle. Pour la table des MEMBRE, utilisez la fonction de la question 2d)  ***********/
   
   /************ Table TP2_MEMBRE ********************/
   
@@ -339,18 +342,17 @@ create sequence NO_RAPPORT_SEQ
   
   /************ Question 1) c) requête d'insertion de la forme insert select qui copie la conférence CRIP2022 dans l’événement CRIP2023 en ajoutant 1 an aux dates.  ****************/
   
-  
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
         values ('CRIP2022', 'TITRE_3', to_date('21-01-01','RR-MM-DD'), to_date('21-02-01','RR-MM-DD'), 'PARIS', '22 RUE DE LA MARINE MARCHANDE');
     
   
   insert into TP2_CONFERENCE(SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
-    select 'CRIP2023', TITRE_CON, DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
+    select 'CRIP2023', 'CONFERENCE 2023', DATE_DEBUT_CON + interval '1' year, DATE_FIN_CON + interval '1' year, LIEU_CON, ADRESSE_CON
         from TP2_CONFERENCE
         where SIGLE_CONFERENCE =  'CRIP2022';
         
         
-   /************ Question 1) d) 2 requêtes SQL qui effacent toutes les conférences et leurs inscriptions dont la date de fin est passée depuis plus de 500 jours.  ***/
+   /************ Question 1)d) 2 requêtes SQL qui effacent toutes les conférences et leurs inscriptions dont la date de fin est passée depuis plus de 500 jours.  ***/
    
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
         values ('CONF_4', 'TITRE_4', to_date('21-08-01','RR-MM-DD'), to_date('21-09-01','RR-MM-DD'), 'ROME', '22 RUE DE LA CATHEDRALE SAINT
@@ -369,7 +371,7 @@ create sequence NO_RAPPORT_SEQ
     from TP2_CONFERENCE where DATE_FIN_CON < (sysdate - 500);
    
   
-  /************* Question 1) e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
+  /************* Question 1)e) requête SQL qui met à jour le lieu et l’adresse d’une conférence. ***************/
   
   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
     values ('CON_3', 'Congrès sur la pauvreté au Cambodge', to_date('15-01-02','RR-MM-DD'), to_date('15-04-03','RR-MM-DD'), 'STADE INTER SCOLAIRE', '1940 RUE DU PAVILLON CENTRAL');
@@ -382,7 +384,7 @@ create sequence NO_RAPPORT_SEQ
   select * from TP2_CONFERENCE;
   
   
-  /******* Question 1f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
+  /******* Question 1)f) Donnez la requête SQL qui affiche les notifications dont le pays du membre attribué est "Cameroun".  ***********/
 
 insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -392,10 +394,9 @@ insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, 
     values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_3_CAM', to_date('15-10-01','RR-MM-DD'), 'Non débutée', 'Note notification_3_CAM', 5, 25);
 
 select N.NO_NOTIFICATION, N.NOTE_NOT
-from TP2_NOTIFICATION N, TP2_MEMBRE M
-where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
-  
-  
+    from TP2_NOTIFICATION N, TP2_MEMBRE M
+    where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
+   
 
  /************ Question 1)g)requête SQL qui affiche le titre des rapports débutés en ordre décroissant de date de dépôt pour le projet « Économie au Sud soudan » **/ 
  
@@ -403,10 +404,10 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
     values (NO_PROJET_SEQ.nextval, 'Économie au Sud soudan', 2500000.23, 'Débuté', to_date('22-01-01','RR-MM-DD'), to_date('22-09-23','RR-MM-DD'));
     
     insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1002_1.docx', to_date('22-03-15','RR-MM-DD'), 'DEBU');
     
      insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
+    values ( NO_RAPPORT_SEQ.nextval, 1002, 'RAPPORT_ECO_SUD', '/fichier1002_2.docx', to_date('22-06-02','RR-MM-DD'), 'DEBU');
     
  
   select P.NO_PROJET, NO_RAPPORT, TITRE_RAP, DATE_DEPOT_RAP,NOM_PRO
@@ -415,7 +416,7 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
    order by DATE_DEPOT_RAP desc;
   
   
-   /*********** Question 1h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
+   /*********** Question 1)h) Afficher le nom et l’état des notifications créées par l’administrateur ayant pour nom «Thomas» et pour prénom «Paul»  */
    
     insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -423,34 +424,36 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
   
   
     insert into TP2_NOTIFICATION ( NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION) 
-    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 25, 10);
+    values ( NO_NOTIFICATION_SEQ.nextval, 'Nom_notif_2_thomas', to_date('15-09-01','RR-MM-DD'), 'Non débutée', 'Note notification_1', 30, 10);
   
   
-  /*1)h)i) avec un in */
+  /* QUestion 1)h)i) avec un in */
+  
   select NOM_NOT, ETAT_NOT
-  from TP2_NOTIFICATION N, TP2_MEMBRE M
-  where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE in (select NO_MEMBRE
+    from TP2_NOTIFICATION N, TP2_MEMBRE M
+    where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE in (select NO_MEMBRE
                                                            from TP2_MEMBRE
                                                            where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
 
 
-  /** 1)h)ii)avec une jointure **/
+  /**Question  1)h)ii)avec une jointure **/
+  
    select NOM_NOT, ETAT_NOT
   from TP2_NOTIFICATION N, TP2_MEMBRE M
   where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and NO_MEMBRE = (select NO_MEMBRE
                                                            from TP2_MEMBRE
                                                            where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
                                                            
- /* 1)h)iii) avec un exists */                                                         
+ /* Question  1)h)iii) avec un exists */   
+ 
  select N.NOM_NOT, N.ETAT_NOT
   from TP2_NOTIFICATION N, TP2_MEMBRE M
   where N.NO_MEM_ADMIN_CREATION = M.NO_MEMBRE and M.NOM_MEM = 'Paul' and M.PRENOM_MEM = 'Thomas' and exists (select NO_MEMBRE
                                                            from TP2_MEMBRE
                                                            where NOM_MEM = 'Paul' and PRENOM_MEM = 'Thomas');
                                                            
-  
-    
- /************* Question 1)i) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
+      
+ /************* Question 1)I) requête SQL qui affiche le prénom et le nom du membre séparé par un espace et le nombre de notifications qui lui sont attribuées  ****************/
  
  insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
   NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
@@ -473,8 +476,8 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
         group by  M.NOM_MEM  || ' ' || M.PRENOM_MEM 
         order by NB_NOTIFICATION desc;
         
-                                                  /******************* Question j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
-    /******************** Question 1) j)i) Utilisant un not in. **************************/
+                                                  /******************* Question 1)j) afficher le nom et le prénom des membres qui ne sont pas directeur d’au moins deux projets. *********************/
+    /******************** Question 1)j)i) Utilisant un not in. **************************/
     
     insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
         values (NO_PROJET_SEQ.nextval, 'Projet_3', 10000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
@@ -505,7 +508,7 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
                                         group by NO_MEMBRE 
                                         having count(NO_PROJET) > 1 );   
          
-    /******************** Question 1) j)iii) Utilisant un not exists *******************/
+    /******************** Question 1)j)iii) Utilisant un not exists *******************/
         
        select M.NOM_MEM, M.PRENOM_MEM 
         from TP2_MEMBRE M, TP2_EQUIPE_PROJET P 
@@ -516,8 +519,7 @@ where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.PAYS_MEM = 'Cameroun';
                                                                                             having count(P.NO_PROJET) > 1); 
                                                                                             
                                                                                             
-    /*****Question 1k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans
-les 18 derniers mois (par rapport à sysdate)******/
+    /*****Question 1)k) Donnez la requête SQL qui affiche en ordre alphabétique le nom des projets qui n’ont fait aucun rapport dans les 18 derniers mois (par rapport à sysdate)******/
 
 insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
     values (NO_PROJET_SEQ.nextval, 'Accord parfait', 200030.23, 'Débuté', to_date('20-06-01','RR-MM-DD'), to_date('25-09-01','RR-MM-DD'));
@@ -531,25 +533,24 @@ insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DAT
     
     
 insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
-    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
+    values ( NO_RAPPORT_SEQ.nextval, 1004, 'RAPPORT_Accord_imparfait', '/fichierAcord2.docx', to_date('21-06-01','RR-MM-DD'), 'VERI');
     
 
 select M.NOM_PRO, N.DATE_DEPOT_RAP 
 	from TP2_PROJET M, TP2_RAPPORT N
 	where M.NO_PROJET = N.NO_PROJET and N.DATE_DEPOT_RAP < (sysdate - interval '18' MONTH)
-
     order by M.NOM_PRO asc;                
     
-    
-    
-    /***** Question 1) L) Pour afficher les courriels des administrateurs dont le courriel termine par .ca qui sont aussi des courriels de
+
+
+ /***** Question 1)L) Pour afficher les courriels des administrateurs dont le courriel termine par .ca qui sont aussi des courriels de
 de superviseurs sans téléphone. Une seule colonne sera affichée. ***/
 
 insert into TP2_MEMBRE( NO_MEMBRE,  UTILISATEUR_MEM, MOT_DE_PASSE_MEM, NOM_MEM, PRENOM_MEM, ADRESSE_MEM, CODE_POSTAL_MEM, PAYS_MEM, TEL_MEM, FAX_MEM, LANGUE_CORRESPONDANCE_MEM,
     NOM_FICHIER_PHOTO_MEM, ADRESSE_WEB_MEM, INSTITUTION_MEM, COURRIEL_MEM, NO_MEMBRE_PATRON, EST_ADMINISTRATEUR_MEM, EST_SUPERVISEUR_MEM, EST_APPOUVEE_INSCRIPTION_MEM) 
     values ( NO_MEMBRE_SEQ.nextval, 'jackson.Mike', FCT_GENERER_MOT_DE_PASSE(7), 'Mike', 'Jackson', '9 Derek Park 4 Sauthoff Court', 'g3e 1j8', 'CANADA', '(418)699-3569','(418)699-4569','Anglais','/membreJack.png','MJackson.com','NASA','mike.jackson@ulaval.ca', 5 ,1,0,1);
 
-/****i) Donnez la requête utilisant un intersect. **/
+/**** Question 1) L) i) Donnez la requête utilisant un intersect. **/
 
 (select COURRIEL_MEM from TP2_MEMBRE
 where EST_ADMINISTRATEUR_MEM = 1)
@@ -557,61 +558,108 @@ intersect
 (select COURRIEL_MEM from TP2_MEMBRE
 where COURRIEL_MEM like '%.ca');
 
-/**ii) Donnez la requête utilisant un exists. **/
+/** Question 1) L) ii) Donnez la requête utilisant un exists. **/
 
 select COURRIEL_MEM from TP2_MEMBRE M
 where exists (select COURRIEL_MEM from TP2_MEMBRE N 
                 where EST_ADMINISTRATEUR_MEM = 1 and M.COURRIEL_MEM = N.COURRIEL_MEM and COURRIEL_MEM like '%.ca');
 
-/**iii) Donnez la requête utilisant un in **/
+/**Question 1) L iii) Donnez la requête utilisant un in **/
+
 select COURRIEL_MEM 
     from TP2_MEMBRE
     where EST_ADMINISTRATEUR_MEM = 1 
     and COURRIEL_MEM in (select COURRIEL_MEM
                             from TP2_MEMBRE
                             where COURRIEL_MEM like '%.ca');      
+
+    
+
+/*****1)m) requête SQL définissant la vue affichant la hiérarchie des membres **********/
+
+/*****1)m)i) requête SQL qui crée cette vue. ******/
+
+create or replace view VUE_HIERACHIE_MEMBRE as 
+    with TOUS_MANAGER( NO_MEMBRE, NO_MEMBRE_PATRON, NOM_MEM, COURRIEL_MEM, TEL_MEM, UTILISATEUR_MEM, NIVEAU ) as 
+    ( select  NO_MEMBRE, NO_MEMBRE_PATRON, NOM_MEM, COURRIEL_MEM, TEL_MEM, UTILISATEUR_MEM, 1 
+        from TP2_MEMBRE 
+        union all
+    select ENFANT.NO_MEMBRE, ENFANT.NO_MEMBRE_PATRON, ENFANT.NOM_MEM, ENFANT.COURRIEL_MEM, ENFANT.TEL_MEM, ENFANT.UTILISATEUR_MEM as chemin, NIVEAU+1
+        from TOUS_MANAGER PERE, TP2_MEMBRE ENFANT 
+        where PERE.NO_MEMBRE = ENFANT.NO_MEMBRE_PATRON  and ENFANT.NO_MEMBRE_PATRON is null)
+        
+    select lpad(' ', (NIVEAU) * 2, ' ') || COURRIEL_MEM as ARBRE, NO_MEMBRE, NO_MEMBRE_PATRON, NOM_MEM, TEL_MEM, sys_connect_by_path(UTILISATEUR_MEM, '/') as CHEMIN,
+    level as NIVEAU
+    from TOUS_MANAGER
+    connect by nocycle prior NO_MEMBRE = NO_MEMBRE_PATRON 
+    start with NO_MEMBRE_PATRON is not null
+       
+       with check option;
+    /**** 1)m)ii   requête SQL qui affiche le contenu de la vue VUE_HIERACHIE_MEMBRE  ******/    
+     select * from VUE_HIERACHIE_MEMBRE;
+     
+     /******** 1)m) iii) Ajout d' un enregistrement dans la table MEMBRE par la vue Oracle *******/
+     
+     /* L'insertion n'est pas possible à partir de la vue avec la version Oracle de l'abre
+      /* Parce que la version oracle de l'arble ne permet la création de la vue.
+      
+
                             
      
                                                 /********************* Question n) requêtes de votre choix suivantes, qui s’appliquent au cas CRIPÉ ********************/
-   /******************** Question 1) n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
+   /******************** Question 1)n)i) Une requête d’effacement de donnée: Supprimer une conference annulée *******************/
    
     insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
         values ('CONF_TEST', 'TITRE_SUPPRIMER', to_date('15-02-02','RR-MM-DD'), to_date('15-03-03','RR-MM-DD'), 'ABIDJAN', '22 RUE DE LA VERENDRILLE');
    
     delete from TP2_CONFERENCE where SIGLE_CONFERENCE = 'CONF_TEST'; 
    
-   /******************** Question 1) n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
+   /******************** Question 1)n)ii) Une requête de mise à jour de donnée:  Activer le compte d'un usager qui s'est inscrit sur la plateforme CIPRÉ  ******************/
    
    update TP2_MEMBRE
    	set EST_APPOUVEE_INSCRIPTION_MEM = 1
    	where NO_MEMBRE = 10;
     
     
-      /********* n)iii à revoir *****/
-  insert into TP2_NOTIFICATION (  NO_NOTIFICATION, NOM_NOT, DATE_ECHEANCE_NOT, ETAT_NOT, NOTE_NOT, NO_MEM_ADMIN_CREATION, NO_MEM_ATTRIBUTION)
-    select N.NO_NOTIFICATION || '1', M.NOM_MEM, N.DATE_ECHEANCE_NOT, N.ETAT_NOT, N.NOTE_NOT, N.NO_MEM_ADMIN_CREATION, N.NO_MEM_ATTRIBUTION  
-        from TP2_NOTIFICATION N, TP2_MEMBRE M
-        where N.NO_MEM_ATTRIBUTION = M.NO_MEMBRE and M.NO_MEMBRE = 25;
-        
+    /*********Question 1)n)iii) creation d'un nouveau rapport mis à l'état vérifié en se basant sur les informations d'un ancien rapport *****/
+ 
+    insert into TP2_RAPPORT ( NO_RAPPORT, NO_PROJET, TITRE_RAP, NOM_FICHIER_RAP, DATE_DEPOT_RAP, CODE_ETAT_RAP)
+        select NO_RAPPORT_SEQ.nextval, NO_PROJET, TITRE_RAP, '/'|| TITRE_RAP || '.docx',DATE_DEPOT_RAP,'VERI'
+        from TP2_RAPPORT
+        where NO_RAPPORT = 1003;     
+            
     
     /** Question n)iv) Une requète d'ajout de colonne à une table : ajouter s'il y a lieu le nom de l'organisateur de la conference **/
+    
 	 alter table TP2_CONFERENCE
-    add ORGANISATEUR_CONF varchar2(40) null;
+        add ORGANISATEUR_CONF varchar2(40) null;
     
     
-     /*************************** 2)a)    ****************************************/
+    /*************************** 2)a) la requête SQL qui crée un déclencheur en ajout et modification sur la table EQUIPE_PROJET et qui s’assure que pour un projet, il y a au plus un membre qui est directeur.  ********************************************/
   
-      create or replace trigger TRG_BIU_DIRECTEUR_PROJET
+       create or replace trigger TRG_BIU_DIRECTEUR_PROJET
             before insert or update of EST_DIRECTEUR_PRO on TP2_EQUIPE_PROJET
             for each row 
+            when (NEW.EST_DIRECTEUR_PRO = 1)
        declare
             V_NB_DIRECTEUR_PROJET number(1);
-      begin 
-            select count(*) into V_NB_DIRECTEUR_PROJET
-                from TP2_EQUIPE_PROJET
-            where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
+      begin            
+            if :OLD.EST_DIRECTEUR_PRO  = 1 then
+                raise_application_error(-20052, 'Ce projet à déjà un directeur');
+            end if;
+                              
+            if :OLD.EST_DIRECTEUR_PRO is null  then 
+                select count(*) into V_NB_DIRECTEUR_PROJET
+                    from TP2_EQUIPE_PROJET
+                where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;                
+            else 
+                dbms_output.put_line('OIF3- ' || :OLD.EST_DIRECTEUR_PRO || ' - ' || :NEW.EST_DIRECTEUR_PRO );
+                select count(*) into V_NB_DIRECTEUR_PROJET
+                    from TP2_EQUIPE_PROJET
+                where NO_PROJET = :NEW.NO_PROJET and EST_DIRECTEUR_PRO = 1 ;
+            end if;
             
-            if V_NB_DIRECTEUR_PROJET > 0 and :NEW.EST_DIRECTEUR_PRO = 1 then
+            if V_NB_DIRECTEUR_PROJET > 0 then
                 raise_application_error(-20052, 'Ce projet à déjà un directeur');
                 end if;
     end TRG_BIU_DIRECTEUR_PROJET;
@@ -621,17 +669,17 @@ select COURRIEL_MEM
     insert into TP2_PROJET ( NO_PROJET, NOM_PRO, MNT_ALLOUE_PRO, STATUT_PRO, DATE_DEBUT_PRO, DATE_FIN_PRO ) 
         values (NO_PROJET_SEQ.nextval, 'Projet_4', 1000, 'Débuté', to_date('15-01-01','RR-MM-DD'), to_date('15-08-01','RR-MM-DD'));
         
-    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1003, 0);
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (25, 1006, 0);
     
-    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1003, 1);
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (15, 1006, 1);
     
-    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1003, 1);
+    insert into TP2_EQUIPE_PROJET ( NO_MEMBRE, NO_PROJET, EST_DIRECTEUR_PRO) values (20, 1006, 1);
     
-    /*
-    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1003 and NO_MEMBRE = 15;
     
-    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1003 and NO_MEMBRE = 15;
-    */
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 0 where NO_PROJET = 1002 and NO_MEMBRE = 15;
+    
+    update TP2_EQUIPE_PROJET set EST_DIRECTEUR_PRO = 1 where NO_PROJET = 1006 and NO_MEMBRE = 15;
+    
 
    	
    	/******************* Question 2) b) Fonction FCT_MOYENNE_MNT_ALLOUE qui reçoit en paramètre un numéro de membre et retourne le montant moyen alloué pour tous ses projets **************/
@@ -746,8 +794,8 @@ end SP_ARCHIVER_PROJET;
   execute SP_ARCHIVER_PROJET(to_date('15-10-01','RR-MM-DD'));
   
   
-  /**************** 2)e) requêtes PL/SQL stored procedure pour la réinitialisation d' un mot de passe temporaire à un utilisateur *****************/
-  
+  /**************** 2)e) 3 requêtes PL/SQL de votre choix (1 stored procedure, 1 function et 1 trigger) *****************/
+   /**************** 2)e)i) requêtes PL/SQL stored procedure pour la réinitialisation d' un mot de passe temporaire à un utilisateur *****************/
   create or replace procedure SP_RÉINITIALISER_MOT_DE_PASSE (V_NO_MEMBRE number, V_NB_CARACTERE number) is
   
     begin        
@@ -759,10 +807,10 @@ end SP_ARCHIVER_PROJET;
   /
    
    execute SP_RÉINITIALISER_MOT_DE_PASSE(30, 6);  
-   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19); 
+   execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
    
    
-    /**************** 2)e) requêtes PL/SQL une fonction pour afficher la date d'une conference programmée *****************/
+   /**************** 2) e) ii) requêtes PL/SQL une fonction pour afficher la date d'une conference programmée *****************/
     
    insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
     values ('COOP', 'Sommet des coop', to_date('22-12-02','RR-MM-DD'), to_date('22-12-10','RR-MM-DD'), 'QUEBEC', '2325 RUE DELGADO QUEBEC CANADA');
@@ -783,94 +831,182 @@ end SP_ARCHIVER_PROJET;
     select FCT_DATE_CONFERENCE('COOP') from DUAL;
    
    
+   /********************************2) e) iii) requêtes PL/SQL un trigger qui empêche l'inscription à une conférence qui n'existe pas  *****************************************/
    
-   /****** Question 3)a)ii)1) Justification des index nécessaires 
-
-les combinaison des champs NOM_MEM et PRENOM_MEM permet de créer deux index différents notamment 
-IDX_MEMBRE_NOM_PRENOM_MEM et IDX_MEMBRE_PRENON_NOM_MEM. En effet la permutation des champs permet de crééer deux index differents 
-dont les plan d'execution sont differents selon la nature des requêtes.
-
-Aussi la combinaison des champs INSTITUTION_MEM et NOM_MEM nous permet également de pouvoir créer deux autres index differents
-ceci en permuttant les champs dans la création des deux index.
-
-Enfin, INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
-nous avons nommé IDX_MEMBRE_INSTITUTION_MEM. *******/
-   
-   
-/****** Question 3)a)ii)2) Justification des index non nécessaires  
-
-les champs NOM_MEM, PRENOM_MEM étant déja des clés étrangères ils sont dejà indexés donc nous n'avons plus à créer des index sur ses champs 
-   
-*******/  
-
-/****** Question 3)a)iii)1)Trois autres situations avec explication où l'index est nécessaire pour CRIPÉ
-
-SITUATION 1 : Recherche d'une conférence 
-EXPLICATION : lorsqu'un membre cherche dans le système une conférence, il se sert du titre de la conference et du lieu de la conférence
-
-
-SITUATION 2 : Rechercher un rapport 
-EXPLICATION : lorsqu'un membre cherche dans le système un rapport, il se sert du nom du fichier rapport et de la date de dépot du rapport
-
-SITUATION 3 : Recherche d'un projet
-EXPLICATION : Lorsqu'un membre cherche un projet, il se sert du nom du projet et du montant alloué au dit projet
-
-*******/
-
-/****** Question 3)a)iii)2)Les requètes d'index pour chacune des trois situations *******/ 
-/******SITUATION 1 : Recherche d'une conférence *******/
-
-create index IDX_CONFERENCE_TITRE_LIEU_CON
-on TP2_CONFERENCE(TITRE_CON, LIEU_CON);
-
-create index IDX_CONFERENCE_LIEU_TITRE_CON
-on TP2_CONFERENCE(LIEU_CON, TITRE_CON);
-
-create index IDX_CONFERENCE_LIEU_CON
-on TP2_CONFERENCE(LIEU_CON);
-
-/******SITUATION 2 : Recherche d'un rapport *******/
-
-create index IDX_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP
-    on TP2_RAPPORT (NOM_FICHIER_RAP, DATE_DEPOT_RAP);
+    create or replace trigger TRG_BI_INSCRIPTION_CONFERENCE
+            before insert on TP2_INSCRIPTION_CONFERENCE
+            for each row 
+       declare
+            V_EXISTE_CONFERENCE number(1);
+      begin   
+            select count(*) into V_EXISTE_CONFERENCE
+                    from TP2_CONFERENCE
+                where SIGLE_CONFERENCE = :NEW.SIGLE_CONFERENCE;    
+                           
+            if V_EXISTE_CONFERENCE < 1 then
+                raise_application_error(-20053,  'La conférence n'' existe pas ');
+            end if;
+    end TRG_BIU_DIRECTEUR_PROJET;
+    /
     
-create index IDX_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP
-on TP2_RAPPORT (DATE_DEPOT_RAP, NOM_FICHIER_RAP);
-
-create index IDX_DATE_DEPOT_RAP
-on TP2_RAPPORT (DATE_DEPOT_RAP);
-
-/******SITUATION 3 : Recherche d'un projet *******/
-create index IDX_NOM_MONTANT_PRO
-on TP2_PROJET (NOM_PRO, MNT_ALLOUE_PRO);
-
-create index IDX_MONTANT_NOM_PRO
-on TP2_PROJET (MNT_ALLOUE_PRO, NOM_PRO);
-
-create index IDX_MONTANT_PRO
-on TP2_PROJET(MNT_ALLOUE_PRO);
-
+     insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
+    values ('NOT_EXIST', 15,  to_date('15-04-03','RR-MM-DD'), 1);
    
    
    
-   
-    /***question 1.m**/
-
-  select lpad(' ', LEVEL * 2, ' ')||PRENOM_MEM, NOM_MEM, TEL_MEM|| ' ' ||COURRIEL_MEM as ARBRE,
-         NO_MEMBRE, NO_MEMBRE_PATRON,
-         sys_connect_by_path(UTILISATEUR_MEM, '/') as CHEMIN,
-         level as NIVEAU
-      from TP2_MEMBRE
-      connect by prior NO_MEMBRE = NO_MEMBRE_PATRON 
-      start with NO_MEMBRE_PATRON is null;
+   /************************ 3) a)Indexation * ******************************************/
+   /************************3) a) i)requêtes SQL dont vous auriez besoin pour créer les Index nécessaires pour améliorer les performances de ces recherches des membre  ******************************************/
+     /* 
+      drop index IDX_TP2_MEMBRE_INSTITUTION_MEM;
+      drop index IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM;
+      drop index IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM;
+      drop index IDX_TP2_MEMBRE_NOM_PRENOM_MEM;
+      drop index IDX_TP2_MEMBRE_PRENOM_NOM_MEM;
+      */
+       explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and PRENOM_MEM = 'John' order by INSTITUTION_MEM;
+             select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where PRENOM_MEM = 'John' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where INSTITUTION_MEM='NASA' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and INSTITUTION_MEM='NASA' order by INSTITUTION_MEM ;
+            select * from table(dbms_xplan.display);
+            
       
-  col ARBRE format a40
-  col CHEMIN format a40
-  
-  
-  
+        create index IDX_TP2_MEMBRE_INSTITUTION_MEM
+            on TP2_MEMBRE (INSTITUTION_MEM);  
+            
+        create index IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM
+            on TP2_MEMBRE (INSTITUTION_MEM, NOM_MEM); 
+            
+        create index IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM
+            on TP2_MEMBRE (NOM_MEM, INSTITUTION_MEM); 
+        
+        create index IDX_TP2_MEMBRE_NOM_PRENOM_MEM
+            on TP2_MEMBRE (NOM_MEM, PRENOM_MEM); 
+            
+        create index IDX_TP2_MEMBRE_PRENOM_NOM_MEM
+            on TP2_MEMBRE (PRENOM_MEM, NOM_MEM);
+            
+            
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and PRENOM_MEM = 'John' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display); 
+        explain plan for
+            select * from TP2_MEMBRE where PRENOM_MEM = 'John' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where INSTITUTION_MEM='NASA' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select *from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and INSTITUTION_MEM='NASA' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
 
-  
-  
-  
-  
+            
+   /************************************ 3) a) ii) 1) Justifions nos choix Pour les index choisis  ***********************************/       
+    
+     /* 
+        Les combinaison des champs NOM_MEM et PRENOM_MEM permet de créer deux index différents notamment 
+        IDX_TP2_MEMBRE_NOM_PRENOM_MEM et IDX_TP2_MEMBRE_PRENON_NOM_MEM qui permettent de retourner les informations d'un membre avec la condition du nom et du prénom plus rapidement.
+        Aussi on ne modifife pas souvent les noms des membres donc les mises à jour sont mois férquente sur les noms des membres un index sur ces champs ne posera pas de problème de performances.
+        
+        Les combinaison des champs NOM_MEM et INSTITUTION_MEM permet de créer deux index différents notamment 
+        IDX_TP2_MEMBRE_INSTITUTION_NOM_MEM et IDX_TP2_MEMBRE_NOM_INSTITUTION_MEM qui permettent de retourner les information d'un membre avec la condition du nom et du prénom rapidement.
+        
+        Enfin, les resultats étant groupé par INSTITUTION_MEM et INSTITUTION_MEM n'étant pas une clé alternative de la table MEMBRE, ceci nous permet d'avoir un autre index sur ce champ que 
+        nous avons nommé IDX_TP2_MEMBRE_INSTITUTION_MEM qui permet de recupérer les information des membres par rapport à leur institution rapidement.
+    */
+    
+    
+   /************************************ 3) a) ii) 2) Justifions nos  choix pour les index non choisis   ***********************************/  
+    
+   /*
+       Un Index sur le champ NOM_PRO de la table TP2_PROJET n'aurait pas été utilement exploitable pour trouver les informations des membres.
+       Aussi, les attributs de la table TP2_PROJET ne sont assez nombreux pour justifier la création d'un index sur cette table.
+   */
+   
+   
+        /****** Question 3)a)iii)1)Trois autres situations avec explication où l'index est nécessaire pour CRIPÉ
+        
+            SITUATION 1 : Recherche d'une conférence 
+            EXPLICATION : lorsqu'un membre cherche dans le système une conférence, il se sert du titre de la conference et du lieu de la conférence
+                   
+            SITUATION 2 : Rechercher un rapport 
+            EXPLICATION : lorsqu'un membre cherche dans le système un rapport, il se sert du nom du fichier rapport et de la date de dépot du rapport
+            
+            SITUATION 3 : Recherche d'un projet
+            EXPLICATION : Lorsqu'un membre cherche un projet, il se sert du nom du projet et du montant alloué au dit projet
+        
+        *******/
+        
+        /****** Question 3)a)iii)2)Les requètes d'index pour chacune des trois situations *******/ 
+        /******SITUATION 1 : Recherche d'une conférence *******/
+        
+        /*
+        drop index IDX_TP2_CONFERENCE_TITRE_LIEU_CON;
+        drop index IDX_TP2_CONFERENCE_LIEU_TITRE_CON;
+        drop index IDX_TP2_CONFERENCE_TITRE_CON;
+        drop index IDX_TP2_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP;
+        drop index IDX_TP2_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP;
+        drop index IDX_TP2_DATE_NOM_FICHIER_RAP;
+        drop index IDX_TP2_PROJET_NOM_MONTANT_PRO;
+        drop index IDX_TP2_PROJET_MONTANT_NOM_PRO;
+      */
+        
+        
+        create index IDX_TP2_CONFERENCE_TITRE_LIEU_CON
+        on TP2_CONFERENCE(TITRE_CON, LIEU_CON);
+        
+        create index IDX_TP2_CONFERENCE_LIEU_TITRE_CON
+        on TP2_CONFERENCE(LIEU_CON, TITRE_CON);
+        
+        
+        /******SITUATION 2 : Recherche d'un rapport *******/
+        
+        create index IDX_TP2_RAPPORT_NOM_FICHIER_DATE_DEPOT_RAP
+            on TP2_RAPPORT (NOM_FICHIER_RAP, DATE_DEPOT_RAP);
+            
+        create index IDX_TP2_RAPPORT_DATE_DEPOT_NOM_FICHIER_RAP
+        on TP2_RAPPORT (DATE_DEPOT_RAP, NOM_FICHIER_RAP);
+        
+        
+        /******SITUATION 3 : Recherche d'un projet *******/
+        create index IDX_TP2_PROJET_NOM_MONTANT_PRO
+        on TP2_PROJET (NOM_PRO, MNT_ALLOUE_PRO);
+        
+        create index IDX_TP2_PROJET_MONTANT_NOM_PRO
+        on TP2_PROJET (MNT_ALLOUE_PRO, NOM_PRO);
+
+    
+    /********************************** 3) b) ii)( stratégie 7.2.2 - voir question 1.g) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
+    alter table TP2_RAPPORT
+        add NOM_ETAT_RAP  varchar2(30) not null;
+        
+    update TP2_RAPPORT R
+        set R.NOM_ETAT_RAP = (select E.NOM_ETAT_RAP
+                                    from TP2_RAPPORT_ETAT E
+                                    where R.CODE_ETAT_RAP = E.CODE_ETAT_RAP);
+                                    
+                                    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+     
