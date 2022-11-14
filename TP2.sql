@@ -807,9 +807,73 @@ end SP_ARCHIVER_PROJET;
    execute SP_RÉINITIALISER_MOT_DE_PASSE(25, 19);  
    
    
+   /**************** 2) e) ii) requêtes PL/SQL une fonction pour afficher la date d'une conference programmée *****************/
+    
+   insert into TP2_CONFERENCE ( SIGLE_CONFERENCE, TITRE_CON, DATE_DEBUT_CON, DATE_FIN_CON, LIEU_CON, ADRESSE_CON)
+    values ('COOP', 'Sommet des coop', to_date('22-12-02','RR-MM-DD'), to_date('22-12-10','RR-MM-DD'), 'QUEBEC', '2325 RUE DELGADO QUEBEC CANADA');
+    
+    
+   create or replace function FCT_DATE_CONFERENCE (P_I_SIGLE_CONFERENCE in varchar2) return date
+    is
+        V_DATE_DEBUT_CON date;
+    begin
+        select DATE_DEBUT_CON into V_DATE_DEBUT_CON from TP2_CONFERENCE
+            where SIGLE_CONFERENCE = P_I_SIGLE_CONFERENCE;
+
+        return V_DATE_DEBUT_CON;
+        
+    end FCT_DATE_CONFERENCE;
+    /
+    
+    select FCT_DATE_CONFERENCE('COOP') from DUAL;
+   
+   
+   /********************************2) e) iii) requêtes PL/SQL un trigger qui empêche l'inscription à une conférence qui n'existe pas  *****************************************/
+   
+    create or replace trigger TRG_BI_INSCRIPTION_CONFERENCE
+            before insert on TP2_INSCRIPTION_CONFERENCE
+            for each row 
+       declare
+            V_EXISTE_CONFERENCE number(1);
+      begin   
+            select count(*) into V_EXISTE_CONFERENCE
+                    from TP2_CONFERENCE
+                where SIGLE_CONFERENCE = :NEW.SIGLE_CONFERENCE;    
+                           
+            if V_EXISTE_CONFERENCE < 1 then
+                raise_application_error(-20052,  'La conférence n'' existe pas ');
+            end if;
+    end TRG_BIU_DIRECTEUR_PROJET;
+    /
+    
+     insert into TP2_INSCRIPTION_CONFERENCE ( SIGLE_CONFERENCE, NO_MEMBRE, DATE_DEMANDE_INS, STATUT_APPROBATION_INS)
+    values ('NOT_EXIST', 15,  to_date('15-04-03','RR-MM-DD'), 1);
+   
+   
    
    /************************ 3) a)Indexation * ******************************************/
    /************************3) a) i)requêtes SQL dont vous auriez besoin pour créer les Index nécessaires pour améliorer les performances de ces recherches des membre  ******************************************/
+      
+      drop index IDX_INSTITUTION_MEM;
+      drop index IDX_INSTITUTION_NOM_MEM;
+      drop index IDX_NOM_INSTITUTION_MEM;
+      drop index IDX_NOM_PRENOM_MEM;
+      drop index IDX_PRENOM_NOM_MEM;
+      
+       explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and PRENOM_MEM = 'John' order by INSTITUTION_MEM;
+             select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where PRENOM_MEM = 'John' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where INSTITUTION_MEM='NASA' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and INSTITUTION_MEM='NASA' order by INSTITUTION_MEM ;
+            select * from table(dbms_xplan.display);
+            
+      
         create index IDX_INSTITUTION_MEM
             on TP2_MEMBRE (INSTITUTION_MEM);  
             
@@ -824,6 +888,21 @@ end SP_ARCHIVER_PROJET;
             
         create index IDX_PRENOM_NOM_MEM
             on TP2_MEMBRE (PRENOM_MEM, NOM_MEM);
+            
+            
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and PRENOM_MEM = 'John' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display); 
+        explain plan for
+            select * from TP2_MEMBRE where PRENOM_MEM = 'John' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where INSTITUTION_MEM='NASA' and NOM_MEM = 'Doe' order by INSTITUTION_MEM;
+            select *from table(dbms_xplan.display);
+        explain plan for
+            select * from TP2_MEMBRE where NOM_MEM = 'Doe' and INSTITUTION_MEM='NASA' order by INSTITUTION_MEM;
+            select * from table(dbms_xplan.display);
+
             
    /************************************ 3) a) ii) 1) Justifions nos choix Pour les index choisis  ***********************************/       
     
@@ -846,7 +925,17 @@ end SP_ARCHIVER_PROJET;
        -- À Vérifier: Les champs NOM_MEM, PRENOM_MEM étant déja des clés étrangères ils sont dejà indexés donc nous n'avons plus à créer des index sur ses champs 
    */
     
-    /********************************** 3) b) ii) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
+    /********************************** 3) b) ii)( stratégie 7.2.2 - voir question 1.g) requêtes SQL qui vous ont permis de modifier les structures des tables concernées  ***************/
+    alter table TP2_RAPPORT
+        add NOM_ETAT_RAP  varchar2(30) not null;
+        
+    update TP2_RAPPORT R
+        set R.NOM_ETAT_RAP = (select E.NOM_ETAT_RAP
+                                    from TP2_RAPPORT_ETAT E
+                                    where R.CODE_ETAT_RAP = E.CODE_ETAT_RAP);
+                                    
+                                    
+  
     
-    
-    
+
+   
